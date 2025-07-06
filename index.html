@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategic Foresight in the AI Era: An Interactive Report</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony (Alabaster, Charcoal, Soft Blue, Muted Lilac) -->
+    <!-- Application Structure Plan: A three-part, non-linear interactive application. Part 1 is a high-level introduction. Part 2 is the main Exploration Hub, a dashboard with two interactive grids (Mental Models, Strategic Frameworks). Clicking a card dynamically loads its content into a central view, allowing for user-driven, non-linear exploration. Part 3 covers implementation and risks in an accordion format. This structure was chosen to break down a dense, text-heavy report into digestible, interactive chunks, empowering the user to explore concepts based on their interest rather than following the report's linear flow, which enhances usability and engagement. -->
+    <!-- Visualization & Content Choices: The application visualizes conceptual information through structure and interaction. The main navigation is a grid of interactive cards (HTML/Tailwind), each representing a concept. Goal: Organize & Navigate. Interaction: onClick to reveal details. Justification: Intuitive and space-efficient. The revealed content uses a side-by-side layout (HTML/Tailwind) to compare traditional vs. AI-enhanced approaches. Goal: Compare. Justification: Clearly shows the value-add of AI. Key takeaways are presented in styled "callout" boxes. Goal: Emphasize. Justification: Draws attention to crucial insights. The implementation section uses an accordion. Goal: Organize Text. Justification: Manages large blocks of text effectively. All visuals are created with HTML/CSS/Unicode to adhere to the NO SVG/Mermaid constraint. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .bg-alabaster { background-color: #F5F5F3; }
+        .text-charcoal { color: #333333; }
+        .bg-soft-blue { background-color: #A7C7E7; }
+        .bg-soft-blue-light { background-color: #D6E6F2; }
+        .border-soft-blue { border-color: #A7C7E7; }
+        .text-soft-blue { color: #4A55A2; }
+        .accent-lilac { background-color: #E0BBE4; }
+        .accent-lilac-light { background-color: #F2E8F4; }
+        .border-lilac { border-color: #E0BBE4; }
+        .text-lilac { color: #957DAD; }
+        .active-nav { color: #4A55A2; font-weight: 600; border-bottom: 2px solid #A7C7E7; }
+        .inactive-nav { color: #6b7280; }
+        .content-card { transition: all 0.3s ease; transform: translateY(0); }
+        .content-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.05); }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out; }
+        .icon {
+            width: 2.5rem; height: 2.5rem;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; font-size: 1.25rem;
+        }
+        .chart-container { position: relative; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; height: 300px; max-height: 400px; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-alabaster text-charcoal antialiased">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-soft-blue">Strategic Foresight in the AI Era</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#introduction" class="inactive-nav hover:text-soft-blue px-3 py-2 rounded-md text-sm font-medium">Introduction</a>
+                        <a href="#models" class="inactive-nav hover:text-soft-blue px-3 py-2 rounded-md text-sm font-medium">Mental Models</a>
+                        <a href="#frameworks" class="inactive-nav hover:text-soft-blue px-3 py-2 rounded-md text-sm font-medium">Strategic Frameworks</a>
+                        <a href="#implementation" class="inactive-nav hover:text-soft-blue px-3 py-2 rounded-md text-sm font-medium">Implementation</a>
+                    </div>
+                </div>
+                 <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-soft-blue focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#introduction" class="block inactive-nav hover:text-soft-blue px-3 py-2 rounded-md text-base font-medium">Introduction</a>
+                <a href="#models" class="block inactive-nav hover:text-soft-blue px-3 py-2 rounded-md text-base font-medium">Mental Models</a>
+                <a href="#frameworks" class="block inactive-nav hover:text-soft-blue px-3 py-2 rounded-md text-base font-medium">Strategic Frameworks</a>
+                <a href="#implementation" class="block inactive-nav hover:text-soft-blue px-3 py-2 rounded-md text-base font-medium">Implementation</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
+        <!-- Section 1: Introduction -->
+        <section id="introduction" class="text-center mb-16 md:mb-24">
+            <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-charcoal mb-4">The Future of Strategy is Human-AI Synergy</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600">
+                This interactive report explores how integrating established mental models with Generative AI (GenAI) can create more robust, data-driven, and agile strategic initiatives. Navigate through the core concepts to understand how this synergy transforms planning from a static exercise into a dynamic, continuous process.
+            </p>
+        </section>
+
+        <!-- Dynamic Content Display Area -->
+        <section id="dynamic-content-display" class="mb-16 md:mb-24 sticky top-20 z-10">
+            <div id="content-placeholder" class="text-center text-gray-400 p-8 bg-white/50 backdrop-blur-sm rounded-xl shadow-inner border border-gray-200">
+                <p class="text-lg">Select a Mental Model or Framework below to explore.</p>
+            </div>
+            <div id="content-viewer" class="hidden"></div>
+        </section>
+
+        <!-- Section 2: Mental Models -->
+        <section id="models" class="mb-16 md:mb-24">
+            <h3 class="text-2xl md:text-3xl font-bold text-center mb-2 text-charcoal">Core Mental Models for Strategic Planning</h3>
+            <p class="text-center text-gray-500 mb-8 md:mb-12">These models provide frameworks for thinking. Click each card to see how GenAI enhances its application.</p>
+            <div id="mental-models-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+                <!-- Cards will be injected here by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Section 3: Strategic Frameworks -->
+        <section id="frameworks" class="mb-16 md:mb-24">
+            <h3 class="text-2xl md:text-3xl font-bold text-center mb-2 text-charcoal">AI-Enhanced Strategic Frameworks</h3>
+            <p class="text-center text-gray-500 mb-8 md:mb-12">Established frameworks provide structure. Discover how GenAI makes them more powerful and efficient.</p>
+            <div id="frameworks-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Cards will be injected here by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Section 4: Implementation & Risks -->
+        <section id="implementation">
+            <h3 class="text-2xl md:text-3xl font-bold text-center mb-2 text-charcoal">Strategic Implementation & Considerations</h3>
+            <p class="text-center text-gray-500 mb-8 md:mb-12">Successfully integrating AI requires more than technology. Explore the key factors for effective implementation.</p>
+            <div id="implementation-accordion" class="max-w-4xl mx-auto space-y-4">
+                 <!-- Accordion items will be injected here by JavaScript -->
+            </div>
+        </section>
+
+    </main>
+    
+    <footer class="bg-white mt-16 md:mt-24 border-t">
+        <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-gray-500">
+            <p>&copy; 2025 Strategic Foresight Interactive. All rights reserved.</p>
+            <p class="text-sm mt-1">An interactive exploration of strategic planning in the AI era.</p>
+        </div>
+    </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const reportData = {
+        mentalModels: [
+            { id: 'first-principles', title: 'First Principles Thinking', icon: '🔍', core: 'Deconstruct problems to fundamental truths, challenging all assumptions.', enhancement: 'Performs rigorous hypothesis testing, root cause analysis, and generates novel solutions by processing vast, disparate data, forcing a move beyond preconceived notions.', synergy: 'Transforms problem-solving from incremental adjustment to fundamental reinvention.' },
+            { id: 'second-order', title: 'Second-Order Thinking', icon: '🌊', core: 'Anticipate long-term ripple effects and unintended consequences of actions.', enhancement: 'Runs advanced scenario modeling and rigorous simulations, continuously monitoring market signals to enable adaptive course correction.', synergy: 'Elevates foresight from educated guessing to data-driven simulation of future possibilities.' },
+            { id: 'inversion', title: 'Inversion', icon: '🔄', core: 'Identify all paths to failure to proactively design for success and avoid pitfalls.', enhancement: 'Facilitates early risk detection, disruption forecasting, and tailored mitigation plans. Quantitatively simulates the "cost of inaction."', synergy: 'Shifts risk management from a reactive exercise to a proactive design challenge.' },
+            { id: 'circle-of-competence', title: 'Circle of Competence', icon: '🎯', core: 'Understand your unique strengths and limitations; operate from a position of advantage.', enhancement: 'Objectively assesses organizational capabilities and skill gaps, using predictive talent analysis to recommend data-driven competency expansion.', synergy: 'Changes self-assessment from a subjective feeling to an objective, strategic evaluation.' },
+            { id: 'iceberg-model', title: 'The Iceberg Model', icon: '🧊', core: 'Look beyond surface-level events to find underlying patterns, structures, and beliefs.', enhancement: 'Automates data collection to enhance pattern recognition across disparate sources, suggesting root causes and corrective actions in real-time.', synergy: 'Deepens root cause analysis from a slow investigation to a dynamic, continuous diagnostic system.' },
+            { id: 'leverage-points', title: 'Leverage Points', icon: '🔑', core: 'Identify small, targeted interventions that can yield significant, widespread change in a system.', enhancement: 'Analyzes complex systems to pinpoint high-ROI opportunities, optimizing resource allocation and suggesting strategic automation for maximum impact.', synergy: 'Turns the search for leverage from an intuitive art into a data-driven optimization science.' },
+            { id: 'pareto-principle', title: 'Pareto Principle (80/20)', icon: '📊', core: 'Prioritize the vital 20% of efforts that will drive 80% of the desired outcomes.', enhancement: 'Precisely identifies high-value use cases and bottlenecks through comprehensive data analysis, ensuring focus on initiatives with substantial returns.', synergy: 'Moves prioritization from instinct-based guesswork to data-backed certainty.' },
+            { id: 'probabilistic-thinking', title: 'Probabilistic Thinking', icon: '🎲', core: 'Reason under uncertainty by quantifying the likelihood of various potential outcomes.', enhancement: 'Mitigates AI "hallucinations" by explicitly quantifying uncertainty in its predictions, enabling robust, risk-adjusted decision-making.', synergy: 'Shifts decision-making from deterministic forecasts to a nuanced understanding of risk landscapes.' },
+            { id: 'map-vs-territory', title: 'The Map Is Not the Territory', icon: '🗺️', core: 'Recognize that all models are simplified representations of a complex reality, not reality itself.', enhancement: 'Amplifies the need for critical human evaluation of AI-generated content (maps), forcing verification against real-world data (territory).', synergy: 'Reinforces the indispensable role of human judgment in validating sophisticated AI representations.' },
+            { id: 'hanlons-razor', title: "Hanlon's Razor", icon: '🤔', core: 'Attribute issues to error or systemic flaws first, rather than assuming malicious intent.', enhancement: 'Aids in bias mitigation and AI debugging by fostering an objective analysis of outputs, tracing issues back to data or algorithmic errors.', synergy: 'Provides a crucial framework for responsibly improving AI systems by focusing on systemic fixes over blame.' }
+        ],
+        frameworks: [
+            { id: 'swot', title: 'SWOT Analysis', icon: 'S W O T', core: 'Identifies internal Strengths & Weaknesses and external Opportunities & Threats.', enhancement: 'Offers efficiency, impartiality, and real-time data-driven insights, automating the analysis process and uncovering nuanced environmental factors.', synergy: 'Transforms SWOT from a static snapshot into a dynamic, continuously updated strategic dashboard.' },
+            { id: 'pestel', title: 'PESTEL Analysis', icon: 'P E S T E L', core: 'Evaluates external Political, Economic, Sociocultural, Technological, Environmental, and Legal factors.', enhancement: 'Automates and streamlines the complex research process, evaluating vast external data sources to provide comprehensive insights in minutes, not days.', synergy: 'Provides a real-time, panoramic view of the macro-environment, enabling faster strategic adaptation.' },
+            { id: 'porters-five-forces', title: "Porter's Five Forces", icon: '⚔️', core: 'Analyzes the competitive intensity and attractiveness of an industry.', enhancement: 'Boosts efficiency and scale of analysis, ensuring consistency and unlocking deeper insights by detecting hidden market trends and forecasting industry shifts.', synergy: 'Provides a more precise, data-driven foundation for navigating the competitive landscape with confidence.' },
+            { id: 'balanced-scorecard', title: 'Balanced Scorecard', icon: '⚖️', core: 'Measures performance across Financial, Customer, Internal Process, and Learning & Growth perspectives.', enhancement: 'Uses AI agents for real-time data processing and predictive analytics, turning the BSC from a static report into a dynamic, forward-looking strategic asset.', synergy: 'Creates a live pulse of organizational health, enabling proactive management and continuous strategy refinement.' },
+            { id: 'okrs', title: 'Objectives & Key Results', icon: '🎯', core: 'A goal-setting methodology to set and track ambitious, measurable goals at scale.', enhancement: 'Analyzes vast datasets to help define ambitious yet grounded objectives, streamlines planning, and facilitates personalized goal alignment across the organization.', synergy: 'Synchronizes the entire organization by translating high-level goals into relevant, data-informed objectives for every team.' },
+            { id: 'scenario-planning', title: 'Scenario Planning', icon: '🎭', core: 'Anticipates and prepares for multiple different future outcomes rather than a single prediction.', enhancement: 'Automates data analysis to spot trends and patterns, allowing users to simulate complex "what if" questions and model the impact of market changes.', synergy: 'Enables faster, more robust preparation for a wide range of potential futures, increasing organizational resilience.' },
+            { id: 'competitive-intelligence', title: 'Competitive Intelligence', icon: '🕵️', core: 'Gathers insights into market dynamics, competitor moves, and customer behavior.', enhancement: 'Sifts through massive quantities of unstructured data in real-time, identifying subtle market signals and emerging trends far faster than human analysts.', synergy: 'Transforms CI from a periodic research project into a continuous, automated environmental scanning system.' },
+            { id: 'innovation-ideation', title: 'Innovation Ideation', icon: '💡', core: 'The process of generating, developing, and communicating new ideas.', enhancement: 'Acts as a creative catalyst by analyzing trends to suggest new product concepts, automating content creation, and rapidly iterating through design alternatives.', synergy: 'Accelerates the innovation cycle by combining data-driven market insights with creative, generative capabilities.' }
+        ],
+        implementation: [
+            { title: 'Building AI Fluency and Core Competencies', content: 'Effective AI integration requires more than basic digital literacy. It demands enhanced critical thinking to validate AI outputs, "prompt engineering" skills to ask the right questions, and learning agility to adapt to new tools. Organizations must invest in upskilling to ensure the workforce can collaborate effectively with AI.' },
+            { title: 'Robust Data Infrastructure and Governance', content: 'AI is only as good as the data it processes. A robust infrastructure is foundational, requiring organizations to address legacy systems and siloed data. Strong data governance is imperative to manage risks like data privacy and ensure the accuracy and quality of AI-generated insights.' },
+            { title: 'Human-AI Collaboration Model', content: 'View GenAI as a tool for augmentation, not just automation. The goal is to amplify and support human workflows by creating "human-AI chemistry." This requires clearly defined roles, well-designed interactions, and crucial human oversight to foster a critical mindset where human judgment complements AI\'s analytical power.' },
+            { title: 'Addressing Risks and Limitations', content: 'Proactively address AI\'s inherent risks: <strong>Model Bias</strong> from skewed training data, <strong>Reduced Explainability</strong> in "black box" models, <strong>Hallucinations</strong> of credible but false content, and the potential for <strong>Cognitive Atrophy</strong> from over-reliance. Mitigation requires robust governance, continuous validation, and fostering internal debate.' },
+            { title: 'Developing a Proprietary Insights Ecosystem', content: 'As external data becomes a commodity via AI, proprietary insights from direct customer interaction, ethnographic research, and unique operational data become a critical competitive differentiator. The strategic focus must shift to generating this unique human-derived data, which AI can then amplify.' }
+        ]
+    };
+
+    const modelsGrid = document.getElementById('mental-models-grid');
+    const frameworksGrid = document.getElementById('frameworks-grid');
+    const implementationAccordion = document.getElementById('implementation-accordion');
+    const contentPlaceholder = document.getElementById('content-placeholder');
+    const contentViewer = document.getElementById('content-viewer');
+
+    function createCard(item, category) {
+        const card = document.createElement('div');
+        card.className = 'content-card bg-white rounded-xl shadow-md p-4 cursor-pointer flex flex-col items-center text-center border border-gray-200';
+        card.dataset.id = item.id;
+        card.dataset.category = category;
+        
+        let iconHtml;
+        if (item.icon.length > 3) { // Simple check for text vs emoji
+            iconHtml = `<div class="icon bg-soft-blue-light text-soft-blue font-bold text-xs">${item.icon}</div>`;
+        } else {
+            iconHtml = `<div class="icon bg-soft-blue-light text-soft-blue">${item.icon}</div>`;
+        }
+
+        card.innerHTML = `
+            ${iconHtml}
+            <h4 class="font-semibold mt-3 text-charcoal">${item.title}</h4>
+            <p class="text-xs text-gray-500 mt-1 flex-grow">${item.core}</p>
+        `;
+        return card;
+    }
+
+    function populateGrids() {
+        reportData.mentalModels.forEach(item => {
+            const card = createCard(item, 'mentalModels');
+            modelsGrid.appendChild(card);
+            card.addEventListener('click', () => displayContent(item.id, 'mentalModels'));
+        });
+        reportData.frameworks.forEach(item => {
+            const card = createCard(item, 'frameworks');
+            frameworksGrid.appendChild(card);
+            card.addEventListener('click', () => displayContent(item.id, 'frameworks'));
+        });
+    }
+
+    function displayContent(id, category) {
+        const item = reportData[category].find(d => d.id === id);
+        if (!item) return;
+
+        contentPlaceholder.classList.add('hidden');
+        contentViewer.innerHTML = `
+            <div class="fade-in bg-white rounded-xl shadow-lg p-6 md:p-8 border border-gray-200">
+                <div class="flex items-center mb-4">
+                    <div class="icon ${category === 'mentalModels' ? 'bg-soft-blue-light text-soft-blue' : 'bg-accent-lilac-light text-lilac'} text-2xl mr-4">${item.icon.length > 3 ? '' : item.icon}</div>
+                    <h3 class="text-2xl font-bold text-charcoal">${item.title}</h3>
+                </div>
+                <div class="grid md:grid-cols-2 gap-6 items-start">
+                    <div>
+                        <h4 class="font-semibold text-lg mb-2 text-gray-700">Core Principle</h4>
+                        <p class="text-gray-600">${item.core}</p>
+                        <h4 class="font-semibold text-lg mt-4 mb-2 text-gray-700">Generative AI Enhancement</h4>
+                        <p class="text-gray-600">${item.enhancement}</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                         <h4 class="font-semibold text-lg mb-2 text-soft-blue">Human-AI Synergy</h4>
+                         <p class="text-gray-600 font-medium">${item.synergy}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        contentViewer.classList.remove('hidden');
+
+        // Scroll to the content viewer for better UX on mobile
+        const viewerTop = contentViewer.getBoundingClientRect().top + window.pageYOffset - 80; // 80px offset for header
+        window.scrollTo({ top: viewerTop, behavior: 'smooth' });
+    }
+    
+    function createAccordion() {
+        reportData.implementation.forEach((item, index) => {
+            const accordionItem = document.createElement('div');
+            accordionItem.className = 'bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden';
+            accordionItem.innerHTML = `
+                <button class="accordion-button w-full text-left p-4 flex justify-between items-center font-semibold text-charcoal hover:bg-gray-50 focus:outline-none">
+                    <span>${item.title}</span>
+                    <svg class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="accordion-content">
+                    <div class="p-4 pt-0 text-gray-600">
+                        ${item.content}
+                    </div>
+                </div>
+            `;
+            implementationAccordion.appendChild(accordionItem);
+        });
+
+        document.querySelectorAll('.accordion-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const content = button.nextElementSibling;
+                const icon = button.querySelector('svg');
+                
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                    icon.style.transform = 'rotate(0deg)';
+                } else {
+                    document.querySelectorAll('.accordion-content').forEach(c => {
+                        c.style.maxHeight = null;
+                        c.previousElementSibling.querySelector('svg').style.transform = 'rotate(0deg)';
+                    });
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            });
+        });
+    }
+
+    // Mobile menu toggle
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+
+    // Active nav highlighting on scroll
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('header nav a');
+    
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (pageYOffset >= sectionTop - 80) { // 80px offset for sticky header
+                current = section.getAttribute('id');
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.classList.remove('active-nav');
+            link.classList.add('inactive-nav');
+            if (link.getAttribute('href').includes(current)) {
+                link.classList.add('active-nav');
+                link.classList.remove('inactive-nav');
+            }
+        });
+    });
+
+    // Smooth scroll for nav links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            if(targetElement){
+               const topPos = targetElement.getBoundingClientRect().top + window.pageYOffset - 70;
+               window.scrollTo({ top: topPos, behavior: 'smooth' });
+            }
+             // Close mobile menu on click
+            if (!mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+    });
+
+    populateGrids();
+    createAccordion();
+});
+</script>
+</body>
+</html>
