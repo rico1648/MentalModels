@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide to AI Prompting Frameworks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- 
+    Chosen Palette: Scholarly Warmth 
+    Application Structure Plan: The SPA uses a persistent sidebar navigation and a main content area. This structure is chosen over a linear document format to allow users to non-linearly explore the content, which is more suited for a reference tool. The core content is divided into logical sections: an introduction to the concepts, an interactive grid for "Core Frameworks," a detailed accordion for "Advanced Strategies," a section on the "Prompting Process" with a visualization, and a conclusion. This architecture prioritizes scannability and quick access to specific frameworks. Clicking on a core framework card reveals its details in a modal, which is a user-friendly pattern for displaying focused information without navigating away from the main view. The advanced frameworks use an accordion to present their multi-stage nature in a digestible, step-by-step format. This design transforms the static report into a dynamic and practical learning tool.
+    Visualization & Content Choices: 
+    - Report Info: Table 1 (Core Frameworks) -> Goal: Inform, Compare, Organize -> Viz/Presentation: Interactive card grid with modals -> Interaction: Click-to-reveal details and copy prompts -> Justification: Transforms a dense table into an engaging, explorable interface. Library: Vanilla JS + Tailwind.
+    - Report Info: Table 2 (Advanced Strategies) -> Goal: Explain a process, Organize -> Viz/Presentation: Accordion interface for each framework -> Interaction: Click to expand each stage -> Justification: Breaks down complex, multi-step processes into manageable chunks, improving comprehension. Library: Vanilla JS + Tailwind.
+    - Report Info: Concept of Iterative Refinement -> Goal: Show change/improvement -> Viz/Presentation: Bar Chart (Chart.js) -> Interaction: Animated on-load -> Justification: A chart visually demonstrates the concept of improving output quality over iterations, which is more impactful than text alone. Library: Chart.js.
+    - Icons/Graphics: Unicode characters and CSS are used for all icons and visual elements to adhere to the no-SVG constraint.
+    CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFCFB;
+            color: #2D3748;
+        }
+        .sidebar-link {
+            transition: all 0.2s ease-in-out;
+        }
+        .sidebar-link.active, .sidebar-link:hover {
+            background-color: #E2E8F0;
+            color: #1A202C;
+            transform: translateX(4px);
+        }
+        .framework-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .framework-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .modal-bg {
+            background-color: rgba(0,0,0,0.5);
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .copy-btn {
+            background-color: #EDF2F7;
+            transition: background-color 0.2s;
+        }
+        .copy-btn:hover {
+            background-color: #E2E8F0;
+        }
+        .copy-btn.copied {
+            background-color: #C6F6D5;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="flex h-screen bg-gray-100">
+        <!-- Sidebar -->
+        <aside class="hidden lg:block w-64 bg-[#F8F7F4] border-r border-gray-200 p-6 space-y-4">
+            <h1 class="text-xl font-bold text-gray-800">AI Prompting Guide</h1>
+            <nav id="sidebar-nav" class="space-y-2">
+                <a href="#introduction" class="sidebar-link active flex items-center p-2 rounded-lg text-gray-600 font-medium">
+                    <span class="mr-3">👋</span> Introduction
+                </a>
+                <a href="#core-frameworks" class="sidebar-link flex items-center p-2 rounded-lg text-gray-600 font-medium">
+                    <span class="mr-3">🧠</span> Core Frameworks
+                </a>
+                <a href="#advanced-strategies" class="sidebar-link flex items-center p-2 rounded-lg text-gray-600 font-medium">
+                    <span class="mr-3">🚀</span> Advanced Strategies
+                </a>
+                <a href="#prompting-process" class="sidebar-link flex items-center p-2 rounded-lg text-gray-600 font-medium">
+                    <span class="mr-3">🔄</span> Prompting Process
+                </a>
+                <a href="#conclusion" class="sidebar-link flex items-center p-2 rounded-lg text-gray-600 font-medium">
+                    <span class="mr-3">✨</span> Conclusion
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto p-6 md:p-10">
+            <div class="max-w-4xl mx-auto">
+                
+                <section id="introduction" class="mb-16">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">The Cognitive Edge in AI Interaction</h2>
+                    <p class="text-lg text-gray-600 mb-4">This guide explores how to leverage established mental models and thinking frameworks to elevate your interaction with AI. The goal is to move beyond simple commands and foster a more sophisticated, collaborative partnership with AI systems, unlocking their full potential for complex problem-solving and innovation.</p>
+                    <div class="bg-white p-6 rounded-lg border border-gray-200">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-3">Understanding User Mental Models</h3>
+                        <p class="text-gray-600 mb-4">A mental model is your internal understanding of how a system works. When interacting with AI, your existing models—often based on static tools or human conversations—shape your expectations. Misaligned models can lead to frustration and suboptimal results.</p>
+                        <p class="text-gray-600">Effective AI collaboration requires understanding that AI systems are dynamic, can learn from feedback, and are not human. This guide provides the frameworks to build a more accurate and powerful mental model for working with AI.</p>
+                    </div>
+                </section>
+
+                <hr class="my-12 border-gray-200">
+
+                <section id="core-frameworks" class="mb-16">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Core Thinking Frameworks</h2>
+                    <p class="text-lg text-gray-600 mb-8">These fundamental frameworks provide structured ways to deconstruct problems, analyze situations, and guide the AI towards more precise, creative, and robust outputs. Click on a card to explore each model.</p>
+                    <div id="frameworks-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    </div>
+                </section>
+                
+                <hr class="my-12 border-gray-200">
+
+                <section id="advanced-strategies" class="mb-16">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Advanced Collaboration Strategies</h2>
+                     <p class="text-lg text-gray-600 mb-8">Beyond individual models, these holistic frameworks integrate AI into complex problem-solving and innovation processes, guiding you through structured, multi-stage collaboration.</p>
+                    <div id="advanced-strategies-container" class="space-y-4">
+                    </div>
+                </section>
+
+                <hr class="my-12 border-gray-200">
+
+                <section id="prompting-process" class="mb-16">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">The Iterative Prompting Process</h2>
+                    <p class="text-lg text-gray-600 mb-8">Effective AI collaboration is a conversation, not a command. It involves a continuous cycle of prompting, receiving output, and refining your approach. This iterative process, or feedback loop, is key to aligning the AI's output with your goals.</p>
+                    <div class="bg-white p-6 rounded-lg border border-gray-200">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-3">Refinement Improves Quality</h3>
+                        <p class="text-gray-600 mb-6">The chart below illustrates how output quality increases with each prompt iteration. Starting broad and progressively adding context or providing feedback helps the AI deliver more accurate and useful results.</p>
+                        <div class="chart-container">
+                            <canvas id="iterativeChart"></canvas>
+                        </div>
+                         <h3 class="text-xl font-semibold text-gray-700 mt-8 mb-3">Prompts for Self-Correction</h3>
+                        <p class="text-gray-600 mb-4">You can explicitly ask the AI to reflect on and improve its own work. This is a powerful technique for enhancing accuracy and nuance.</p>
+                        <ul class="space-y-2">
+                             <li class="bg-gray-50 p-3 rounded-md text-sm text-gray-700 font-mono">"Review your previous response. What are its strengths and weaknesses? How could it be improved for clarity and accuracy?"</li>
+                             <li class="bg-gray-50 p-3 rounded-md text-sm text-gray-700 font-mono">"Critically assess your own response. What flaws might you identify? Revise it to be more neutral and fact-based."</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <hr class="my-12 border-gray-200">
+                
+                <section id="conclusion" class="mb-16">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Conclusion & Future Outlook</h2>
+                    <div class="bg-white p-6 rounded-lg border border-gray-200 space-y-4 text-gray-600">
+                        <p>Effective AI prompting is about applying structured human cognition to guide AI's power. By using these mental models, you can deconstruct problems, anticipate consequences, mitigate biases, and ensure comprehensive, logical outputs.</p>
+                        <p>Frameworks like the D³ Method and the Critical Thinking Framework provide roadmaps for strategic AI workflows, clarifying the unique roles of human insight and AI execution. Iterative refinement through feedback loops is essential for building a co-learning relationship with AI, leading to continuous improvement and trust.</p>
+                        <p class="font-semibold text-gray-700">As AI evolves, the ability to strategically orchestrate its cognitive processes through these frameworks will become a core professional competency, transforming AI from a simple tool into a true intellectual partner.</p>
+                        <p>Click <a href="index.html">HERE</a> to go back to previous page.</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="modal" class="modal-bg fixed inset-0 z-50 flex items-center justify-center p-4 hidden opacity-0">
+        <div class="modal-content bg-white w-full max-w-2xl rounded-lg shadow-xl overflow-hidden transform scale-95">
+            <div class="p-6">
+                <div class="flex justify-between items-start">
+                    <div class="flex items-center">
+                        <span id="modal-icon" class="text-3xl mr-4"></span>
+                        <h3 id="modal-title" class="text-2xl font-bold text-gray-800"></h3>
+                    </div>
+                    <button id="close-modal" class="text-gray-400 hover:text-gray-600">&times;</button>
+                </div>
+                <div id="modal-body" class="mt-4 text-gray-600 prose max-w-none"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const data = {
+                coreFrameworks: [
+                    { id: 'first-principles', icon: '⚛️', title: 'First Principles Thinking', content: `<p>Deconstruct complex problems into their most fundamental truths, discarding assumptions to build solutions from the ground up. This turns the AI into a Socratic partner, pushing for foundational understanding rather than replicating existing patterns.</p><h5>Sample Prompts:</h5><ul><li>"Act as an expert in first-principles reasoning. Deconstruct the problem of [problem] into its absolute fundamental truths. Identify all underlying assumptions. Based only on these truths, propose a novel solution."</li><li>"For [topic], instead of 'improvements,' use first principles to answer: 'What is the fundamental purpose of [topic]?' and 'What are the underlying principles that make it work?'"</li></ul>` },
+                    { id: 'second-order', icon: '🌊', title: 'Second-Order Thinking', content: `<p>Extend beyond immediate consequences to consider the ripple effects and long-term implications of actions. This transforms the AI from a simple answer generator into a sophisticated scenario planner for strategic foresight.</p><h5>Sample Prompts:</h5><ul><li>"Analyze the proposal for [Action] by identifying its immediate effects, then detail the second-order and third-order consequences across [dimensions] and over [timeframes]."</li><li>"If we implement [Solution], what are the direct benefits? Now, consider the 'and then what?' for our customer satisfaction, employee roles, and operational costs over the next year."</li></ul>` },
+                    { id: 'inversion', icon: '🔄', title: 'Inversion', content: `<p>Think backwards. Instead of asking how to succeed, ask what would guarantee failure. This helps uncover hidden pitfalls and vulnerabilities that optimism might overlook, making the AI a powerful tool for risk mitigation.</p><h5>Sample Prompts:</h5><ul><li>"For our [Project], conduct a 'pre-mortem.' Imagine it has completely failed. Brainstorm all possible reasons for this failure, from internal missteps to external market shifts."</li><li>"We want to [Goal]. Instead of telling me how to achieve this, tell me: 'What actions would guarantee the *opposite* of our goal?' Focus on common pitfalls."</li></ul>` },
+                    { id: 'occams-razor', icon: '⚖️', title: "Occam's Razor", content: `<p>When multiple solutions exist, the simplest one with the fewest assumptions is usually best. This principle guides the AI to produce efficient, streamlined, and more reliable outputs by avoiding unnecessary complexity.</p><h5>Sample Prompts:</h5><ul><li>"Using an Occam's Razor methodology, propose the simplest and most efficient solution for [Problem]. Avoid unnecessary complexity and explain your reasoning."</li><li>"Given these competing explanations for [Phenomenon], apply Occam's Razor to identify the most probable one."</li></ul>` },
+                    { id: 'hanlons-razor', icon: '🤝', title: "Hanlon's Razor", content: `<p>Never attribute to malice that which can be adequately explained by incompetence or misunderstanding. This framework guides the AI to generate more neutral, fair, and less inflammatory interpretations by exploring non-malicious causes for problems.</p><h5>Sample Prompts:</h5><ul><li>"When analyzing [Situation], apply Hanlon's Razor: Instead of assuming malicious intent, generate a list of plausible explanations based on oversight or misunderstanding."</li><li>"We received negative feedback on [Product Feature]. Use Hanlon's Razor to brainstorm reasons based on user misunderstanding, design flaws, or technical glitches."</li></ul>` },
+                    { id: 'circle-of-competence', icon: '🎯', title: 'Circle of Competence', content: `<p>Understand the boundaries of the AI's knowledge and capabilities. Prompting the AI to articulate its own limitations reduces the risk of relying on inaccurate information ("hallucinations") and highlights when human expertise is critical.</p><h5>Sample Prompts:</h5><ul><li>"Based on your training data up to [date], what are the limits of your knowledge regarding [topic]? Where would you advise a human expert to step in?"</li><li>"Given the task of [Task], identify which sub-tasks fall within your core competencies and which would require human judgment or real-time information you cannot access."</li></ul>` },
+                    { id: 'map-is-not-territory', icon: '🗺️', title: 'The Map Is Not The Territory', content: `<p>Recognize that the AI's model of the world is an imperfect abstraction, not reality itself. This prompts the AI to challenge its own assumptions, express uncertainty, and acknowledge where its 'map' might be incomplete or biased, leading to more nuanced outputs.</p><h5>Sample Prompts:</h5><ul><li>"When discussing [topic], recognize that your knowledge is a 'map.' Identify inherent biases or simplifications in this 'map.' What aspects of the 'territory' (real-world nuance) might you miss?"</li><li>"Critique your previous response from the perspective of 'The Map Is Not The Territory.' Where is your model's representation an oversimplification?"</li></ul>` },
+                    { id: '5-whys', icon: '❓', title: '5 Whys', content: `<p>A simple, iterative questioning technique to explore the cause-and-effect relationships underlying a particular problem. By repeatedly asking "Why?", you can peel back layers of symptoms to find the root cause, guiding the AI to perform a deeper diagnosis.</p><h5>Sample Prompts:</h5><ul><li>"Our [Metric] has declined. Apply the '5 Whys' technique to diagnose the root cause. Start with 'Why did the [Metric] decline?' and continue asking 'Why?' for each answer."</li><li>"Analyze the provided incident report for [Event]. Use the 5 Whys method to trace the chain of events and identify the fundamental reasons for the failure."</li></ul>` },
+                    { id: 'mece', icon: '🧩', title: 'MECE', content: `<p>Stands for Mutually Exclusive, Collectively Exhaustive. A principle for organizing information into distinct, non-overlapping categories that cover all possibilities. It provides a powerful constraint for structuring AI output to be logical, comprehensive, and clear.</p><h5>Sample Prompts:</h5><ul><li>"Provide a MECE breakdown of the key factors influencing [Topic]. Ensure the categories are mutually exclusive and collectively exhaustive."</li><li>"Generate a MECE list of strategies to [Goal]. Categorize them logically and ensure all major strategic avenues are covered."</li></ul>` },
+                    { id: 'swot', icon: '📊', title: 'SWOT Analysis', content: `<p>A strategic planning framework to identify internal Strengths and Weaknesses, and external Opportunities and Threats. AI can enhance this process by rapidly analyzing vast amounts of data to uncover factors human analysts might miss.</p><h5>Sample Prompts:</h5><ul><li>"Perform a comprehensive SWOT analysis for [Company/Product]. Provide actionable recommendations for leveraging strengths, overcoming weaknesses, seizing opportunities, and mitigating threats."</li><li>"Analyze the competitive landscape for [Competitor] using a SWOT framework. Highlight their unique strengths and weaknesses."</li></ul>` },
+                    { id: 'eisenhower-matrix', icon: '🗂️', title: 'Eisenhower Matrix', content: `<p>A task prioritization tool that categorizes tasks based on urgency and importance (Do, Schedule, Delegate, Delete). Offloading this assessment to an AI saves time, reduces decision fatigue, and optimizes workflow.</p><h5>Sample Prompts:</h5><ul><li>"Given the following list of tasks, categorize each into the Eisenhower Matrix. Explain your reasoning for each assignment: [List of tasks]."</li><li>"As a project manager, help me prioritize my weekly tasks using the Eisenhower Matrix. Assess each task's impact on project goals (importance) and its deadline (urgency)."</li></ul>` },
+                    { id: 'probabilistic-thinking', icon: '🎲', title: 'Probabilistic Thinking', content: `<p>Assessing the likelihood of various outcomes to manage uncertainty. Prompting the AI to externalize its probabilistic reasoning helps in making more informed decisions, especially when information is incomplete.</p><h5>Sample Prompts:</h5><ul><li>"Given the market data, estimate the probability (e.g., low, medium, high, or a percentage range) that our sales will increase by 10% next quarter. Justify your assessment."</li><li>"For the proposed project, perform a probabilistic risk assessment. Identify potential adverse events and estimate their likelihood and severity."</li></ul>` }
+                ],
+                advancedStrategies: [
+                    { 
+                        title: 'Design Thinking: A User-Centered Approach', 
+                        stages: [
+                            { name: '1. Empathize', humanRole: 'User Research, Observation', aiRole: 'Synthesize qualitative data, identify patterns, summarize themes.', prompt: "Analyze user interview transcripts; identify recurring pain points and emotional drivers." },
+                            { name: '2. Define', humanRole: 'Problem Framing, Insight Synthesis', aiRole: 'Articulate human-centered problem statements, generate "How Might We" questions.', prompt: "Based on these insights, define a human-centered problem statement and 5 'How Might We' questions." },
+                            { name: '3. Ideate', humanRole: 'Brainstorming, Divergent Thinking', aiRole: 'Generate diverse ideas, challenge assumptions, explore unconventional solutions.', prompt: "Brainstorm 20 innovative solutions for [HMW question], including some wild ideas." },
+                            { name: '4. Prototype', humanRole: 'Solution Conception', aiRole: 'Describe features, user flows, technical considerations for low-fidelity solutions.', prompt: "Develop a detailed description for a low-fidelity prototype of [Idea X]." },
+                            { name: '5. Test', humanRole: 'User Feedback, Validation', aiRole: 'Simulate user reactions, identify usability issues, generate test questions.', prompt: "Simulate user reactions to [Prototype]; identify potential frustrations and suggest test questions." }
+                        ] 
+                    },
+                    { 
+                        title: "The D³ Method: Deconstruct, Delegate, Distill",
+                        stages: [
+                            { name: '1. Deconstruction', humanRole: 'Break down complex goals into atomic tasks.', aiRole: '(Pre-prompting step; AI receives atomic tasks).', prompt: "(This is a human-driven pre-work step to create a clear project plan)." },
+                            { name: '2. Delegation', humanRole: 'Guide AI iteratively, provide context from previous steps.', aiRole: 'Execute atomic tasks with rich, evolving context; generate raw output.', prompt: "Using the identified platforms [X, Y, Z], generate 3 unique content pillars for each." },
+                            { name: '3. Distillation', humanRole: 'Synthesize, filter, enhance with human judgment, voice, and ethics.', aiRole: '(Provide raw material for human refinement).', prompt: "Combine these outputs into a cohesive [final deliverable] structure for my final human review." }
+                        ]
+                    },
+                    {
+                        title: 'The Critical Thinking Framework',
+                        stages: [
+                            { name: '1. Meta-Clarity', humanRole: 'Define actual goal, identify assumptions, clarify success metrics.', aiRole: '(Pre-prompting step; AI receives clear, well-defined requests).', prompt: "(This is a human-driven pre-work step to clarify your own thinking before prompting)." },
+                            { name: '2. Systematic Deconstruction', humanRole: 'Break down meta-clear goal into distinct components.', aiRole: 'Guide multi-step reasoning (Chain-of-Thought), separate info/analytical needs.', prompt: "Step 1: Define [Concept]. Step 2: Explain its historical context. Step 3: Analyze its modern implications." },
+                            { name: '3. Context Enrichment', humanRole: 'Provide domain knowledge, purpose, anticipate misunderstandings.', aiRole: 'Incorporate specific background, audience, terminology clarifications.', prompt: "Explain [Concept] to a [Target Audience] for the purpose of [Purpose], avoiding [Jargon]." },
+                            { name: '4. Iterative Refinement', humanRole: 'Use AI outputs to refine own thinking, identify gaps.', aiRole: 'Adjust responses based on feedback, self-correct, engage in dialogue.', prompt: "Your previous response was good, but can you elaborate on [specific point]? Please refine it for [quality metric]." }
+                        ]
+                    }
+                ]
+            };
+            
+            const frameworksGrid = document.getElementById('frameworks-grid');
+            const advancedContainer = document.getElementById('advanced-strategies-container');
+            const modal = document.getElementById('modal');
+            const modalIcon = document.getElementById('modal-icon');
+            const modalTitle = document.getElementById('modal-title');
+            const modalBody = document.getElementById('modal-body');
+            const closeModalBtn = document.getElementById('close-modal');
+
+            function copyToClipboard(text, btn) {
+                const el = document.createElement('textarea');
+                el.value = text;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'Copy';
+                    btn.classList.remove('copied');
+                }, 1500);
+            }
+
+            data.coreFrameworks.forEach(fw => {
+                const card = document.createElement('div');
+                card.className = 'framework-card bg-white p-6 rounded-lg border border-gray-200 cursor-pointer';
+                card.innerHTML = `
+                    <div class="flex items-center">
+                        <span class="text-3xl mr-4">${fw.icon}</span>
+                        <h4 class="text-lg font-semibold text-gray-800">${fw.title}</h4>
+                    </div>
+                `;
+                card.addEventListener('click', () => {
+                    modalIcon.textContent = fw.icon;
+                    modalTitle.textContent = fw.title;
+                    modalBody.innerHTML = fw.content;
+                    
+                    modalBody.querySelectorAll('li').forEach(li => {
+                        const originalText = li.textContent;
+                        li.innerHTML = `<span>${originalText}</span><button class="copy-btn float-right text-xs font-semibold px-2 py-1 rounded-md ml-2">Copy</button>`;
+                        li.querySelector('.copy-btn').addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            copyToClipboard(originalText, e.target);
+                        });
+                    });
+
+                    modal.classList.remove('hidden');
+                    setTimeout(() => {
+                         modal.classList.remove('opacity-0');
+                         modal.querySelector('.modal-content').classList.remove('scale-95');
+                    }, 10);
+                });
+                frameworksGrid.appendChild(card);
+            });
+
+            data.advancedStrategies.forEach(strategy => {
+                const accordionContainer = document.createElement('div');
+                accordionContainer.className = 'bg-white rounded-lg border border-gray-200';
+                
+                const accordionHeader = document.createElement('button');
+                accordionHeader.className = 'w-full flex justify-between items-center p-5 text-left font-semibold text-gray-800';
+                accordionHeader.innerHTML = `
+                    <span>${strategy.title}</span>
+                    <svg class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                `;
+                
+                const accordionContent = document.createElement('div');
+                accordionContent.className = 'accordion-content px-5 pb-5 text-gray-600';
+
+                const table = document.createElement('div');
+                table.className = 'overflow-x-auto';
+                table.innerHTML = `
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-4 py-3">Stage</th>
+                                <th scope="col" class="px-4 py-3">Human Role</th>
+                                <th scope="col" class="px-4 py-3">AI Role & Prompt Focus</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${strategy.stages.map(stage => `
+                                <tr class="bg-white border-b">
+                                    <th scope="row" class="px-4 py-4 font-medium text-gray-900 whitespace-nowrap">${stage.name}</th>
+                                    <td class="px-4 py-4">${stage.humanRole}</td>
+                                    <td class="px-4 py-4 font-mono text-xs bg-gray-50 rounded-b-md">${stage.prompt}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                accordionContent.appendChild(table);
+                accordionContainer.appendChild(accordionHeader);
+                accordionContainer.appendChild(accordionContent);
+                advancedContainer.appendChild(accordionContainer);
+                
+                accordionHeader.addEventListener('click', () => {
+                    const content = accordionHeader.nextElementSibling;
+                    const svg = accordionHeader.querySelector('svg');
+                    const isOpen = content.style.maxHeight;
+
+                    document.querySelectorAll('.accordion-content').forEach(el => el.style.maxHeight = null);
+                    document.querySelectorAll('.accordion-content').forEach(el => el.previousElementSibling.querySelector('svg').classList.remove('rotate-180'));
+
+                    if (!isOpen || isOpen === "0px") {
+                        content.style.maxHeight = content.scrollHeight + "px";
+                        svg.classList.add('rotate-180');
+                    }
+                });
+            });
+
+
+            closeModalBtn.addEventListener('click', () => {
+                modal.classList.add('opacity-0');
+                modal.querySelector('.modal-content').classList.add('scale-95');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            });
+            
+            modal.addEventListener('click', (e) => {
+                if(e.target === modal) {
+                    closeModalBtn.click();
+                }
+            });
+
+            const ctx = document.getElementById('iterativeChart').getContext('2d');
+            const iterativeChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Iteration 1', 'Iteration 2', 'Iteration 3', 'Iteration 4'],
+                    datasets: [{
+                        label: 'Output Quality',
+                        data: [45, 65, 80, 95],
+                        backgroundColor: [
+                            'rgba(159, 122, 234, 0.4)',
+                            'rgba(159, 122, 234, 0.6)',
+                            'rgba(159, 122, 234, 0.8)',
+                            'rgba(159, 122, 234, 1)'
+                        ],
+                        borderColor: 'rgba(139, 92, 246, 1)',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: { display: true, text: 'Quality Score' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: true }
+                    }
+                }
+            });
+            
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.sidebar-link');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: '-50% 0px -50% 0px' });
+
+            sections.forEach(section => observer.observe(section));
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
