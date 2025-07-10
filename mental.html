@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Models & Frameworks for Gen AI Prompting</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Slate Blue/Teal accents -->
+    <!-- Application Structure Plan: A tabbed, single-page application designed for a logical user journey from learning to application. It includes: 1. An introduction. 2. An interactive "Mental Models Explorer" with clickable cards. 3. An interactive "Thinking Frameworks Playbook" with similar card-based exploration. 4. A "Synergy Lab" using an interactive diagram and a dynamic radar chart to show how models and frameworks combine to mitigate cognitive biases. 5. A "Prompting Sandbox" tool that allows users to select models/frameworks and generate structured prompt templates. This structure was chosen to transform the dense report into an engaging, non-linear exploratory tool that actively teaches the user and provides a practical utility, enhancing usability and knowledge retention far more effectively than a static document. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Mental Models list (Table 1). Goal: Inform/Organize. Viz/Method: Interactive HTML/CSS card grid. Interaction: Click to expand/reveal details. Justification: More engaging and less overwhelming than a long table. Library: Vanilla JS.
+        - Report Info: Thinking Frameworks list (Table 2). Goal: Inform/Organize. Viz/Method: Interactive HTML/CSS card grid. Interaction: Click to expand. Justification: Consistent, user-friendly exploration. Library: Vanilla JS.
+        - Report Info: Synergy/Cognitive Bias section. Goal: Show Relationships. Viz/Method: 1) Interactive HTML/CSS diagram. 2) Dynamic Radar Chart. Interaction: Click a bias to highlight related models/frameworks; click a model/framework to update the chart. Justification: Visually demonstrates complex relationships and comparative strengths more effectively than text. Library: Vanilla JS, Chart.js.
+        - Report Info: Practical application sections (6.1-6.4). Goal: Application. Viz/Method: Interactive HTML form (dropdowns, textarea). Interaction: Select model/framework to generate prompt template. Justification: Turns abstract concepts into a practical, usable tool. Library: Vanilla JS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #fdfdfc; }
+        .tab-active { border-color: #3b82f6; color: #3b82f6; background-color: #eff6ff; }
+        .tab-inactive { border-color: transparent; color: #4b5563; }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        .card { transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+        .card-detail { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out; }
+        .card.is-open .card-detail { max-height: 500px; }
+        .synergy-item { transition: all 0.3s ease; }
+        .synergy-item.highlight { background-color: #dbeafe; border-color: #3b82f6; }
+        .chart-container { position: relative; width: 100%; max-width: 500px; margin: auto; height: 350px; max-height: 40vh; }
+        @media (min-width: 768px) { .chart-container { height: 400px; max-height: 50vh; } }
+    </style>
+</head>
+<body class="bg-[#f8f7f5] text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        
+        <header class="text-center mb-8 md:mb-12">
+            <h1 class="text-3xl md:text-5xl font-bold text-gray-900 mb-2">An Interactive Guide to AI Prompting</h1>
+            <p class="text-md md:text-xl text-gray-600 max-w-3xl mx-auto">Leverage Mental Models & Thinking Frameworks for Innovation and Creativity</p>
+        </header>
+
+        <main>
+            <!-- Introduction Section -->
+            <section id="introduction" class="mb-12 p-6 bg-white rounded-2xl shadow-sm border border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Your Thinking is the Blueprint for AI's Output</h2>
+                <p class="text-gray-700 mb-4">Generative AI is a powerful amplifier. Its potential for creativity and innovation isn't unlocked by simple commands, but by the depth and structure of your thinking. Vague prompts lead to generic results; structured, thoughtful prompts yield insightful and novel outcomes.</p>
+                <p class="text-gray-700">This guide translates the core principles of advanced human cognition into a practical, interactive toolkit. Here you will learn to use two types of cognitive tools to elevate your AI interactions:</p>
+                <div class="mt-6 grid md:grid-cols-2 gap-6">
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                        <h3 class="font-semibold text-lg text-blue-800">🧠 Mental Models</h3>
+                        <p class="text-blue-700">The "lenses" you use to see the world. They are simplified representations of reality that help you understand complexity and deconstruct problems.</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                        <h3 class="font-semibold text-lg text-green-800">🛠️ Thinking Frameworks</h3>
+                        <p class="text-green-700">The "blueprints" for action. They are structured, step-by-step methods for problem-solving, innovation, and creative execution.</p>
+                    </div>
+                </div>
+                <p class="mt-6 text-center text-gray-600">Use the tabs below to explore these concepts, see how they work together, and apply them in the Prompting Sandbox.</p>
+            </section>
+
+            <!-- Navigation Tabs -->
+            <div class="mb-8 border-b border-gray-200">
+                <nav class="flex flex-wrap -mb-px" aria-label="Tabs">
+                    <button class="tab-btn text-sm md:text-base font-medium text-center p-4 border-b-2 rounded-t-lg tab-active" data-tab="models">Mental Models Explorer</button>
+                    <button class="tab-btn text-sm md:text-base font-medium text-center p-4 border-b-2 rounded-t-lg tab-inactive" data-tab="frameworks">Thinking Frameworks Playbook</button>
+                    <button class="tab-btn text-sm md:text-base font-medium text-center p-4 border-b-2 rounded-t-lg tab-inactive" data-tab="synergy">Synergy Lab</button>
+                    <button class="tab-btn text-sm md:text-base font-medium text-center p-4 border-b-2 rounded-t-lg tab-inactive" data-tab="sandbox">Prompting Sandbox</button>
+                </nav>
+            </div>
+
+            <!-- Content Sections -->
+            <div id="tab-content">
+                <section id="models" class="content-section active">
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-bold text-gray-900">Mental Models Explorer</h2>
+                        <p class="text-gray-600 max-w-2xl mx-auto mt-2">Mental models are how we simplify complexity. They are the cognitive lenses that shape how you understand problems. Click on a model to learn how it can be used to generate more innovative AI prompts.</p>
+                    </div>
+                    <div id="models-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                </section>
+
+                <section id="frameworks" class="content-section">
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-bold text-gray-900">Thinking Frameworks Playbook</h2>
+                        <p class="text-gray-600 max-w-2xl mx-auto mt-2">Frameworks provide a structured path for action. They are proven methodologies for innovation and creative problem-solving. Explore how to embed these frameworks into your AI prompts for more structured outcomes.</p>
+                    </div>
+                    <div id="frameworks-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                </section>
+
+                <section id="synergy" class="content-section">
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-bold text-gray-900">The Synergy Lab</h2>
+                        <p class="text-gray-600 max-w-2xl mx-auto mt-2">True cognitive power comes from combining mental models (the 'why') with thinking frameworks (the 'how'). This synergy helps overcome cognitive biases—the mental shortcuts that lead to flawed thinking. This section visualizes these connections.</p>
+                    </div>
+                    <div class="grid lg:grid-cols-5 gap-8 items-start">
+                        <div class="lg:col-span-3 bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                             <h3 class="font-bold text-xl mb-4 text-center">Bias Mitigation Toolkit</h3>
+                             <p class="text-sm text-gray-600 mb-4 text-center">Click on a cognitive bias below to see which Mental Models and Thinking Frameworks can help you (and your AI) overcome it.</p>
+                            <div id="biases-list" class="space-y-3"></div>
+                            <hr class="my-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <h4 class="font-semibold text-lg mb-2 text-blue-800">Relevant Mental Models</h4>
+                                    <div id="synergy-models" class="space-y-2"></div>
+                                </div>
+                                 <div>
+                                    <h4 class="font-semibold text-lg mb-2 text-green-800">Relevant Frameworks</h4>
+                                    <div id="synergy-frameworks" class="space-y-2"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                             <h3 class="font-bold text-xl mb-4 text-center">Cognitive Strengths Visualizer</h3>
+                             <p class="text-sm text-gray-600 mb-4 text-center">Click on a model or framework in the lists to the left to see its relative strengths visualized on the chart.</p>
+                            <div class="chart-container">
+                                <canvas id="synergy-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="sandbox" class="content-section">
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-bold text-gray-900">AI Prompting Sandbox</h2>
+                        <p class="text-gray-600 max-w-2xl mx-auto mt-2">Apply your knowledge. Build a sophisticated, structured prompt for your innovation or creative project. Select a mental model and a thinking framework to generate a powerful prompt template.</p>
+                    </div>
+                    <div class="max-w-4xl mx-auto bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200">
+                        <div class="grid md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label for="model-select" class="block mb-2 font-medium text-gray-700">1. Choose a Mental Model (The Lens)</label>
+                                <select id="model-select" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"></select>
+                            </div>
+                            <div>
+                                <label for="framework-select" class="block mb-2 font-medium text-gray-700">2. Choose a Thinking Framework (The Blueprint)</label>
+                                <select id="framework-select" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"></select>
+                            </div>
+                        </div>
+                         <div class="mb-6">
+                            <label for="problem-input" class="block mb-2 font-medium text-gray-700">3. Define Your Problem or Creative Goal</label>
+                            <input type="text" id="problem-input" placeholder="e.g., 'designing a sustainable packaging solution'" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <button id="generate-prompt-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-md hover:bg-blue-700 transition-colors">Generate Prompt Template</button>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <h3 class="font-semibold text-lg mb-2">4. Your Generated Prompt:</h3>
+                             <p id="prompt-tip" class="text-sm text-gray-500 mb-4">Customize the template below. The more specific context you add, the better the AI's response will be.</p>
+                            <textarea id="generated-prompt" rows="12" class="w-full p-3 bg-white border border-gray-300 rounded-md font-mono text-sm" readonly></textarea>
+                            <button id="copy-prompt-btn" class="mt-4 bg-gray-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-gray-700 transition-colors">Copy Prompt</button>
+                            <span id="copy-feedback" class="ml-4 text-sm font-medium text-green-600 opacity-0 transition-opacity">Copied!</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+        <footer class="text-center mt-12 pt-8 border-t border-gray-200">
+            <p class="text-gray-500">Built to demonstrate the power of structured thinking in Human-AI collaboration.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            const modelsData = [
+                { id: 'fpt', name: 'First Principles Thinking', icon: '🔍', explanation: 'Breaking down problems to fundamental truths.', relevance: 'Enables AI to generate truly novel solutions by avoiding assumptions and conventional analogies.', example: 'Apply First Principles Thinking to design a new energy system for a city, assuming no existing infrastructure. What are the fundamental needs for energy, and how can they be met from scratch?', strengths: [5, 2, 2, 4, 3] },
+                { id: 'sot', name: 'Second-Order Thinking', icon: ' dominoes', explanation: 'Considering long-term implications and consequences.', relevance: 'Guides AI to anticipate ripple effects and unintended outcomes of proposed innovations.', example: 'Analyze the immediate and second-order societal impacts of widespread adoption of AI-generated creative content on human artists and the economy.', strengths: [2, 5, 2, 4, 3] },
+                { id: 'inv', name: 'Inversion', icon: '🔄', explanation: 'Thinking backward to identify failure points.', relevance: 'Helps AI uncover hidden barriers and deconstruct potential flaws in creative projects or solutions.', example: 'Imagine a new product launch has failed spectacularly. Using Inversion, identify 5 non-obvious reasons that could lead to its failure, assuming all initial plans were perfect.', strengths: [3, 4, 1, 5, 2] },
+                { id: 'syst', name: 'Systems Thinking', icon: '🕸️', explanation: 'Understanding interconnected components and feedback loops.', relevance: 'Enables AI to generate holistic solutions that consider dependencies and dynamic interactions.', example: 'Map the interconnected system of a modern music production workflow... How might an AI music composition tool disrupt or enhance this system?', strengths: [2, 5, 4, 3, 2] },
+                { id: 'te', name: 'Thought Experiment', icon: ' ', explanation: 'Exploring hypothetical scenarios.', relevance: 'Allows AI to play with ideas without real-world constraints, generating imaginative and boundary-pushing concepts.', example: 'Conduct a Thought Experiment: What if humans could instantly share emotions? How would this impact creative expression?', strengths: [5, 2, 1, 2, 5] },
+                { id: 'mos', name: 'Margin of Safety', icon: '🛡️', explanation: 'Building in buffers for uncertainty.', relevance: 'Guides AI to suggest robust, resilient creative strategies that account for unforeseen challenges.', example: 'Propose a marketing strategy for a new AI-powered art platform. Include a Margin of Safety by identifying potential market volatility...', strengths: [1, 4, 4, 5, 1] },
+            ];
+
+            const frameworksData = [
+                { id: 'dt', name: 'Design Thinking', icon: '🧑‍🎨', explanation: 'Human-centered approach (Empathize, Define, Ideate, Prototype, Test).', relevance: 'Guides AI to generate human-centered solutions, from user research synthesis to iterative creative outputs.', example: 'You are a UX designer using Design Thinking. Empathize with a user struggling with creative block. Define their core problem. Ideate 5 AI-powered tools...', strengths: [3, 3, 5, 5, 4] },
+                { id: 'agile', name: 'Agile/Scrum', icon: '🏃‍♂️', explanation: 'Iterative, sprint-based project management.', relevance: 'Structures AI-assisted project phases, enabling iterative content generation and refinement.', example: 'Act as a Scrum Master. Our sprint goal is to generate 10 unique taglines... Use Agile principles to guide the AI...', strengths: [2, 4, 3, 3, 3] },
+                { id: 'ls', name: 'Lean Startup', icon: '🚀', explanation: 'Customer-focused, "Build-Measure-Learn" feedback loop.', relevance: 'Directs AI to generate MVPs, test hypotheses, and refine ideas based on simulated market feedback.', example: 'You are a Lean Startup consultant. We have a hypothesis: \'AI-generated children\'s books can foster early literacy.\' Generate a concept for an MVP...', strengths: [3, 4, 5, 4, 2] },
+                { id: 'scamper', name: 'SCAMPER', icon: '🔧', explanation: 'Systematic idea generation (Substitute, Combine, Adapt, etc.).', relevance: 'Provides a structured method for AI to explore diverse creative variations and generate novel concepts.', example: 'Apply the SCAMPER framework to a traditional children\'s toy... Generate 7 innovative variations, one for each SCAMPER element.', strengths: [4, 1, 2, 2, 5] },
+                { id: 'dc', name: 'Divergent-Convergent Thinking', icon: '↔️', explanation: 'Generating many ideas then narrowing down.', relevance: 'Guides AI through a two-stage creative process: broad idea generation followed by critical evaluation.', example: 'First, use Divergent Thinking to generate 20 unconventional marketing slogans... Then, apply Convergent Thinking to select the top 3...', strengths: [5, 2, 2, 3, 4] },
+            ];
+            
+            const biasesData = [
+                { name: 'Confirmation Bias', explanation: 'Favoring information that confirms existing beliefs.', models: ['inv', 'te', 'syst'], frameworks: ['dt', 'ls'] },
+                { name: 'Functional Fixedness', explanation: 'Seeing objects only in their usual roles.', models: ['fpt', 'te'], frameworks: ['scamper', 'dt'] },
+                { name: 'Overconfidence Bias', explanation: 'Excessive confidence in one\'s own answers.', models: ['mos', 'inv'], frameworks: ['ls', 'agile'] },
+                { name: 'Short-term Thinking', explanation: 'Focusing on immediate results over long-term effects.', models: ['sot', 'syst'], frameworks: ['dt'] }
+            ];
+
+            const chartLabels = ['Novelty', 'Holistic View', 'User-Centricity', 'Risk Mitigation', 'Creativity Boost'];
+            const chartDefaultData = [3, 3, 3, 3, 3];
+
+            function initTabs() {
+                const tabButtons = document.querySelectorAll('.tab-btn');
+                const contentSections = document.querySelectorAll('.content-section');
+
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const tab = button.dataset.tab;
+
+                        tabButtons.forEach(btn => {
+                            btn.classList.remove('tab-active');
+                            btn.classList.add('tab-inactive');
+                        });
+                        button.classList.add('tab-active');
+                        button.classList.remove('tab-inactive');
+
+                        contentSections.forEach(section => {
+                            section.classList.remove('active');
+                            if (section.id === tab) {
+                                section.classList.add('active');
+                            }
+                        });
+                    });
+                });
+            }
+
+            function createCard(item, type) {
+                const cardColor = type === 'model' ? 'blue' : 'green';
+                return `
+                    <div id="card-${item.id}" class="card bg-white p-5 rounded-xl shadow-sm border border-gray-200 cursor-pointer">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-bold text-gray-900 flex items-center">
+                                <span class="text-2xl mr-3">${item.icon}</span>
+                                ${item.name}
+                            </h3>
+                            <span class="text-2xl text-gray-400 transform transition-transform duration-300 ">+</span>
+                        </div>
+                        <div class="card-detail pt-4 mt-4 border-t border-gray-200">
+                            <p class="text-sm text-gray-600 mb-3"><strong class="font-semibold text-gray-800">Explanation:</strong> ${item.explanation}</p>
+                            <p class="text-sm text-gray-600 mb-4"><strong class="font-semibold text-gray-800">AI Prompting Relevance:</strong> ${item.relevance}</p>
+                            <div class="bg-${cardColor}-50 p-3 rounded-lg border border-${cardColor}-200">
+                                <p class="text-sm text-${cardColor}-800 font-semibold mb-1">Example Prompt:</p>
+                                <p class="text-sm text-${cardColor}-700">"${item.example}"</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            function populateGrids() {
+                const modelsGrid = document.getElementById('models-grid');
+                const frameworksGrid = document.getElementById('frameworks-grid');
+                modelsGrid.innerHTML = modelsData.map(item => createCard(item, 'model')).join('');
+                frameworksGrid.innerHTML = frameworksData.map(item => createCard(item, 'framework')).join('');
+
+                document.querySelectorAll('.card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        card.classList.toggle('is-open');
+                        const icon = card.querySelector('.flex span');
+                        icon.style.transform = card.classList.contains('is-open') ? 'rotate(45deg)' : 'rotate(0deg)';
+                    });
+                });
+            }
+
+            function initSynergyLab() {
+                const biasesList = document.getElementById('biases-list');
+                const synergyModels = document.getElementById('synergy-models');
+                const synergyFrameworks = document.getElementById('synergy-frameworks');
+
+                biasesList.innerHTML = biasesData.map(bias => `
+                    <div data-bias="${bias.name}" class="p-3 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100">
+                        <p class="font-semibold text-gray-800">${bias.name}</p>
+                        <p class="text-sm text-gray-500">${bias.explanation}</p>
+                    </div>
+                `).join('');
+                
+                function updateSynergyDisplay(biasName) {
+                    const selectedBias = biasesData.find(b => b.name === biasName);
+                    
+                    document.querySelectorAll('#biases-list > div').forEach(div => {
+                       div.classList.toggle('bg-blue-100', div.dataset.bias === biasName);
+                       div.classList.toggle('border-blue-300', div.dataset.bias === biasName);
+                    });
+                    
+                    if (selectedBias) {
+                        synergyModels.innerHTML = modelsData
+                            .filter(m => selectedBias.models.includes(m.id))
+                            .map(m => `<div class="synergy-item p-2 border border-transparent rounded-md cursor-pointer" data-id="${m.id}" data-type="model">${m.name}</div>`).join('');
+                        synergyFrameworks.innerHTML = frameworksData
+                            .filter(f => selectedBias.frameworks.includes(f.id))
+                            .map(f => `<div class="synergy-item p-2 border border-transparent rounded-md cursor-pointer" data-id="${f.id}" data-type="framework">${f.name}</div>`).join('');
+                    } else {
+                        synergyModels.innerHTML = modelsData.map(m => `<div class="synergy-item p-2 border border-transparent rounded-md cursor-pointer" data-id="${m.id}" data-type="model">${m.name}</div>`).join('');
+                        synergyFrameworks.innerHTML = frameworksData.map(f => `<div class="synergy-item p-2 border border-transparent rounded-md cursor-pointer" data-id="${f.id}" data-type="framework">${f.name}</div>`).join('');
+                    }
+                    
+                    document.querySelectorAll('.synergy-item').forEach(item => {
+                        item.addEventListener('click', (e) => {
+                            const id = e.target.dataset.id;
+                            const type = e.target.dataset.type;
+                            const data = type === 'model' ? modelsData : frameworksData;
+                            const selectedItem = data.find(d => d.id === id);
+                            
+                            document.querySelectorAll('.synergy-item').forEach(i => i.classList.remove('highlight'));
+                            e.target.classList.add('highlight');
+
+                            if(selectedItem && synergyChart) {
+                                synergyChart.data.datasets[0].data = selectedItem.strengths;
+                                synergyChart.data.datasets[0].label = selectedItem.name;
+                                synergyChart.update();
+                            }
+                        });
+                    });
+                }
+                
+                biasesList.addEventListener('click', (e) => {
+                    const biasDiv = e.target.closest('[data-bias]');
+                    if (biasDiv) {
+                        updateSynergyDisplay(biasDiv.dataset.bias);
+                    }
+                });
+                
+                updateSynergyDisplay(); // Initial population
+            }
+            
+            let synergyChart;
+            function initSynergyChart() {
+                const ctx = document.getElementById('synergy-chart').getContext('2d');
+                synergyChart = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: chartLabels,
+                        datasets: [{
+                            label: 'Select a Model or Framework',
+                            data: chartDefaultData,
+                            fill: true,
+                            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                            borderColor: 'rgb(59, 130, 246)',
+                            pointBackgroundColor: 'rgb(59, 130, 246)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgb(59, 130, 246)'
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        elements: { line: { tension: 0.1 } },
+                        scales: {
+                            r: {
+                                angleLines: { color: 'rgba(0, 0, 0, 0.1)' },
+                                grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                                pointLabels: { font: { size: 12 } },
+                                suggestedMin: 0,
+                                suggestedMax: 5,
+                                ticks: { stepSize: 1, backdropColor: 'transparent' }
+                            }
+                        },
+                        plugins: {
+                            legend: { position: 'top' }
+                        }
+                    }
+                });
+            }
+
+            function initSandbox() {
+                const modelSelect = document.getElementById('model-select');
+                const frameworkSelect = document.getElementById('framework-select');
+                const problemInput = document.getElementById('problem-input');
+                const generateBtn = document.getElementById('generate-prompt-btn');
+                const generatedPrompt = document.getElementById('generated-prompt');
+                const copyBtn = document.getElementById('copy-prompt-btn');
+                const copyFeedback = document.getElementById('copy-feedback');
+
+                modelSelect.innerHTML = '<option value="">-- Select a Mental Model --</option>' + modelsData.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+                frameworkSelect.innerHTML = '<option value="">-- Select a Framework --</option>' + frameworksData.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
+
+                generateBtn.addEventListener('click', () => {
+                    const selectedModel = modelsData.find(m => m.id === modelSelect.value);
+                    const selectedFramework = frameworksData.find(f => f.id === frameworkSelect.value);
+                    const problem = problemInput.value.trim() || '[Specify your creative problem or goal here]';
+
+                    if (!selectedModel || !selectedFramework) {
+                        generatedPrompt.value = 'Please select both a mental model and a thinking framework to generate a prompt.';
+                        return;
+                    }
+                    
+                    const prompt = `
+# AI Prompt for Innovation
+## ROLE
+You are an expert-level strategist and creative facilitator. Your thinking combines the intellectual rigor of ${selectedModel.name} with the practical, structured approach of the ${selectedFramework.name} framework.
+
+## CONTEXT
+We are tackling the following creative challenge: "${problem}". Our goal is to generate innovative and well-structured solutions.
+
+## TASK
+Leverage your combined expertise to address this challenge. Follow these steps:
+
+1.  **Analyze with the Mental Model (${selectedModel.name}):** First, apply the lens of ${selectedModel.name} to deconstruct the problem.
+    * *Prompt for AI:* "${selectedModel.explanation} Briefly analyze our problem of '${problem}' using this model. What core truths or hidden dynamics does it reveal?"
+
+2.  **Execute with the Framework (${selectedFramework.name}):** Now, use the stages of the ${selectedFramework.name} framework to structure your thinking and generate actionable ideas.
+    * *Prompt for AI:* "Based on the initial analysis, guide me through the ${selectedFramework.name} process for our problem. Start with the first step: [Describe the first step of the framework, e.g., for Design Thinking: 'Empathize with the target user. Who are they and what are their deepest needs related to this problem?']. For each step, generate specific questions we should ask or ideas we should explore."
+
+3.  **Synthesize and Suggest Next Steps:** Conclude by summarizing the key insights and providing a clear, actionable next step.
+
+## OUTPUT FORMAT
+Provide a clear, well-structured response. Use markdown headings for each section (Analysis, Execution, Synthesis). Be concise yet comprehensive.
+`;
+                    generatedPrompt.value = prompt.trim();
+                    generatedPrompt.removeAttribute('readonly');
+                });
+                
+                copyBtn.addEventListener('click', () => {
+                    if(!generatedPrompt.value || generatedPrompt.hasAttribute('readonly')) return;
+                    
+                    generatedPrompt.select();
+                    document.execCommand('copy');
+
+                    copyFeedback.style.opacity = '1';
+                    setTimeout(() => {
+                        copyFeedback.style.opacity = '0';
+                    }, 2000);
+                });
+            }
+
+
+            // Initialize all components
+            initTabs();
+            populateGrids();
+            initSynergyLab();
+            initSynergyChart();
+            initSandbox();
+        });
+    </script>
+
+</body>
+</html>
+ 
