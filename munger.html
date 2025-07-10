@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Executive's AI Playbook: Munger's Latticework & Advanced Prompting</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Calm Neutral Blue -->
+    <!-- Application Structure Plan: A tab-based single-page application is chosen to make the dense report content easily digestible and navigable for busy executives. This non-linear structure allows users to jump directly to sections of interest—'Latticework 101' for foundational concepts, 'AI Prompting' for techniques, 'The Playbooks' for actionable scenarios, and 'Mindset' for strategy. This is more user-friendly than a long scroll, promoting exploration. The Playbooks section, the core of the app, uses a sub-tab system to detail each scenario, visually linking chained mental models to specific, copyable AI prompts. This task-oriented design transforms the report from a static document into an interactive, practical tool. -->
+    <!-- Visualization & Content Choices: Report Info: Core mental models and AI prompting techniques from Tables 1 & 2. Goal: Inform & Organize. Viz/Method: Interactive cards (HTML/CSS/JS) instead of static tables. Interaction: On-click reveals detailed info. Justification: More engaging and less overwhelming than a large table. Report Info: Playbook scenarios chaining models to prompts. Goal: Explain Relationships & Enable Action. Viz/Method: Visual flow diagrams (HTML/Tailwind CSS) and interactive prompt blocks. Interaction: "Copy to Clipboard" button on each prompt. Justification: The flow diagram clarifies the strategic process, and the copy function makes the prompts immediately useful. No quantitative data exists, so no charts are used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        .tab-active {
+            border-color: #3B82F6;
+            color: #3B82F6;
+            font-weight: 600;
+        }
+        .tab-inactive {
+            border-color: transparent;
+            color: #6B7280;
+        }
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .playbook-tab-active {
+            background-color: #3B82F6;
+            color: white;
+        }
+        .playbook-tab-inactive {
+            background-color: #E5E7EB;
+            color: #4B5563;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chart-container { 
+            position: relative; 
+            width: 100%; 
+            max-width: 600px; 
+            margin-left: auto; 
+            margin-right: auto; 
+            height: 300px;
+            max-height: 400px; 
+        }
+        @media (min-width: 768px) { .chart-container { height: 350px; } }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+    <div class="container mx-auto p-4 sm:p-6 md:p-8">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-stone-900">The Executive's AI Playbook</h1>
+            <p class="mt-2 text-lg text-stone-600">Integrating Munger's Latticework & Advanced AI Prompting for Strategic Advantage</p>
+        </header>
+
+        <nav class="mb-8 border-b border-stone-200">
+            <ul class="flex flex-wrap justify-center -mb-px text-sm font-medium text-center">
+                <li class="mr-2">
+                    <button class="main-tab inline-block p-4 border-b-2 rounded-t-lg tab-active" data-tab="latticework">Latticework 101</button>
+                </li>
+                <li class="mr-2">
+                    <button class="main-tab inline-block p-4 border-b-2 rounded-t-lg tab-inactive" data-tab="ai-prompting">AI Prompting</button>
+                </li>
+                <li class="mr-2">
+                    <button class="main-tab inline-block p-4 border-b-2 rounded-t-lg tab-inactive" data-tab="playbooks">The Playbooks</button>
+                </li>
+                <li>
+                    <button class="main-tab inline-block p-4 border-b-2 rounded-t-lg tab-inactive" data-tab="mindset">Mindset & Culture</button>
+                </li>
+            </ul>
+        </nav>
+
+        <main id="main-content">
+            
+            <section id="latticework" class="main-content-panel fade-in">
+                 <div class="text-center mb-8 max-w-3xl mx-auto">
+                    <h2 class="text-2xl font-bold text-stone-800 mb-2">The Latticework of Mental Models</h2>
+                    <p class="text-stone-600">Charles Munger's concept of a 'latticework' is about building a cognitive toolkit of fundamental concepts from a wide range of disciplines. By weaving together these "big ideas," you can view problems through multiple lenses, overcome cognitive biases, and make more robust decisions. This section introduces the core models.</p>
+                </div>
+                <div id="latticework-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                </div>
+            </section>
+
+            <section id="ai-prompting" class="main-content-panel hidden fade-in">
+                <div class="text-center mb-8 max-w-3xl mx-auto">
+                    <h2 class="text-2xl font-bold text-stone-800 mb-2">Advanced AI Prompting Techniques</h2>
+                    <p class="text-stone-600">To unlock AI's true potential, executives must move beyond simple questions. Advanced prompting is like programming a strategic asset. It requires clarity, context, and structure to guide the AI toward precise, high-value outputs. Here are key techniques to master.</p>
+                </div>
+                <div id="ai-prompting-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
+            </section>
+
+            <section id="playbooks" class="main-content-panel hidden fade-in">
+                <div class="text-center mb-8 max-w-3xl mx-auto">
+                    <h2 class="text-2xl font-bold text-stone-800 mb-2">Integrated Playbooks for Business Impact</h2>
+                    <p class="text-stone-600">This is where theory meets practice. These playbooks show how to chain mental models with advanced AI prompts to tackle real-world executive challenges. Select a playbook to see how to structure your thinking and your AI interactions for superior results in strategic planning, innovation, and complex problem-solving.</p>
+                </div>
+                <div class="flex justify-center mb-6 space-x-2 sm:space-x-4">
+                    <button class="playbook-tab px-4 py-2 rounded-lg text-sm sm:text-base font-semibold playbook-tab-active" data-playbook="strategy">Strategic Planning</button>
+                    <button class="playbook-tab px-4 py-2 rounded-lg text-sm sm:text-base font-semibold playbook-tab-inactive" data-playbook="innovation">Innovation</button>
+                    <button class="playbook-tab px-4 py-2 rounded-lg text-sm sm:text-base font-semibold playbook-tab-inactive" data-playbook="problem-solving">Problem-Solving</button>
+                </div>
+                <div id="playbooks-content"></div>
+            </section>
+
+            <section id="mindset" class="main-content-panel hidden fade-in">
+                 <div class="text-center mb-8 max-w-3xl mx-auto">
+                    <h2 class="text-2xl font-bold text-stone-800 mb-2">Cultivating a Latticework-Driven AI Mindset</h2>
+                    <p class="text-stone-600">Integrating these frameworks isn't a one-time task; it's a fundamental shift in leadership. It requires a commitment to continuous learning, intellectual humility, and strategically augmenting your intelligence with AI. This section explores how to cultivate this mindset for yourself and your organization.</p>
+                   <p <p class="text-stone-600">Click <a href="index.html">HERE</a> to return to home page.</p> 
+                </div>
+                <div id="mindset-content" class="space-y-4 max-w-3xl mx-auto"></div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        const data = {
+            latticeworkModels: [
+                { title: 'Invert, Always Invert', definition: 'Thinking backward; focusing on avoiding failure rather than achieving success.', application: 'Risk mitigation, identifying vulnerabilities in strategies or products.', benefit: 'Leads to more robust decision-making by proactively addressing potential pitfalls.' },
+                { title: 'First Principles Thinking', definition: 'Deconstructing a problem to its fundamental truths and building solutions from scratch.', application: 'Radical innovation, cost reduction, challenging industry norms.', benefit: 'Enables breakthrough solutions by moving beyond conventional wisdom.' },
+                { title: 'Circle of Competence', definition: 'Understanding and operating within the limits of one\'s knowledge and expertise.', application: 'Strategic investment, project selection, delegation.', benefit: 'Avoids unnecessary risks and fosters more informed, reliable decisions.' },
+                { title: 'Lollapalooza Effect', definition: 'Recognizing the cumulative, often disproportionate, impact of multiple converging factors.', application: 'Identifying amplified risks (e.g., cascading failures) or synergistic opportunities.', benefit: 'Enhances decision quality by considering complex interactions and their magnified outcomes.' },
+                { title: 'Regret Minimization', definition: 'Making decisions based on whether one would regret *not* taking an action in the long term.', application: 'Bold strategic moves, entrepreneurial ventures, career choices.', benefit: 'Encourages courageous, forward-looking decisions aligned with long-term aspirations.' },
+                { title: 'Pareto Principle (80/20)', definition: '80% of results come from 20% of efforts.', application: 'Prioritization of tasks, resource allocation, identifying key drivers of success/failure.', benefit: 'Optimizes efficiency and impact by focusing on high-leverage activities.' },
+                { title: 'Probability & Decision Trees', definition: 'Quantifying uncertainty by mapping outcomes and assigning probabilities.', application: 'Investment analysis, strategic forecasting, risk assessment.', benefit: 'Provides a methodical way to navigate uncertainty and assess potential risks/rewards.' },
+                { title: 'Learning from Others\' Errors', definition: 'Gaining insights by studying the mistakes and failures of others.', application: 'Avoiding costly errors, improving organizational processes, refining strategies.', benefit: 'Accelerates learning and reduces risk without incurring direct consequences.' },
+            ],
+            aiPromptingTechniques: [
+                { title: 'RTCE Framework', purpose: 'To guide AI to adopt a specific persona and deliver targeted output.', usage: 'When a specific professional perspective or specialized expertise is needed for a clear deliverable.', example: '"As a cybersecurity expert (Role), outline the steps to secure our cloud infrastructure (Task) against ransomware attacks based on recent industry trends (Context). Provide a prioritized action plan (Expectation)."' },
+                { title: 'The Lede Structure', purpose: 'To ensure comprehensive coverage of all key elements in a request.', usage: 'For strategic planning, policy development, or complex organizational challenges requiring thorough detail.', example: '"What: Develop a new employee onboarding program. Why: To improve retention... Where: Across all global offices... How: Incorporating digital tools... How much: Aim for 90% new hire satisfaction... Why (reasoning): To build a high-performing culture."' },
+                { title: 'Self-Critical Prompting', purpose: 'To enhance output quality by having AI evaluate its own response for weaknesses.', usage: 'For high-stakes projects, proposals, or situations requiring thorough scrutiny and risk assessment.', example: '"Draft a Q4 sales forecast report. Then, identify two potential weaknesses in your forecast assumptions and suggest how to address them."' },
+                { title: 'Chain-of-Thought', purpose: 'To encourage AI to break down complex problems and show its reasoning step-by-step.', usage: 'For logical reasoning tasks, complex decision-making, or multi-stage problem-solving.', example: '"Analyze the market entry strategy for a new product. Think step by step, considering market size, competitive landscape, regulatory hurdles, and potential distribution channels."' },
+                { title: 'Meta Prompting', purpose: 'To provide a structural framework for AI\'s response, ensuring consistent organization.', usage: 'When the format and organization of the output are critical, or consistent structure is needed.', example: '"Generate a project proposal. Follow these sections: 1. Project Overview, 2. Objectives, 3. Scope, 4. Deliverables, 5. Timeline, 6. Budget, 7. Team."' },
+                { title: 'Self-Consistency', purpose: 'To improve accuracy for complex reasoning by generating and comparing multiple solutions.', usage: 'For math problems, logic puzzles, or any scenario where accuracy is critical and multiple solution paths exist.', example: '"Determine the optimal location for our new manufacturing plant. Generate three different reasoning paths..., then select the most consistent answer."' },
+            ],
+            playbooks: {
+                strategy: {
+                    title: 'Strategic Planning & Market Entry',
+                    scenario: 'A large technology company is evaluating entering a new, high-growth market, such as sustainable energy solutions in Europe. The decision involves significant capital investment and competitive risks.',
+                    steps: [
+                        { models: ['First Principles', 'Circle of Competence'], title: 'Initial Market Deconstruction', prompt: '"As a multidisciplinary market analyst (Role), deconstruct the fundamental principles driving the European sustainable energy market (Task), considering physics (energy conversion), economics (incentives, subsidies), and core customer needs (Context). Identify areas where our existing software and hardware competencies provide a unique advantage, and explicitly list critical knowledge gaps we must address before market entry. Focus on the core value creation mechanisms (Expectation)."', benefit: 'A detailed breakdown of the market\'s foundational elements, highlighting competitive advantages and knowledge gaps. This moves analysis beyond surface-level trends.' },
+                        { models: ['Opportunity Cost', 'Decision Trees', 'Self-Critical'], title: 'Strategic Options & Risk Assessment', prompt: '"Given the analysis of the European sustainable energy market, generate three distinct market entry strategies (e.g., acquisition, organic growth, joint venture). For each strategy, outline the primary benefits, potential risks, and the opportunity cost associated with it. Quantify the probability of success and failure for each risk factor using a simple scale (e.g., low, medium, high). Finally, critically evaluate your own proposed strategies, identifying two potential blind spots or unaddressed risks in your analysis, and suggest how to mitigate them."', benefit: 'Structured strategic options with clear risk-reward profiles and a self-critique that prompts deeper human analysis and risk mitigation planning.' },
+                        { models: ['Strategic Alignment', 'Lede Structure'], title: 'Organizational Alignment Check', prompt: '"What: Develop a strategic alignment assessment for our proposed entry into the European sustainable energy market. Why: To ensure coherence across all organizational dimensions. Where: Focus on our technology, operational processes, employee capabilities, and customer relationship management. How: By evaluating current state against market demands. How much: Provide a high-level gap analysis for each dimension. Why (reasoning): To identify necessary internal adjustments for successful market integration. Structure the output with clear headings for each dimension."', benefit: 'A structured report identifying alignment and misalignment across critical functions, providing a roadmap for internal adjustments necessary for market success.' }
+                    ]
+                },
+                innovation: {
+                    title: 'Innovation Brainstorming & Product Disruption',
+                    scenario: 'A consumer electronics company aims to develop a groundbreaking new product that disrupts an established market, similar to how the iPhone revolutionized mobile phones.',
+                    steps: [
+                        { models: ['Inversion', 'Design Thinking'], title: 'User Pain Point Identification', prompt: '"As a UX researcher (Role), identify the top five most significant pain points and unmet needs for users of current smart home devices (Task), based on common frustrations, technical limitations, and overlooked desires (Context). Think step-by-step through a typical user\'s daily interaction with these devices. Provide specific examples of how these pain points manifest, then suggest how a new product could invert these frustrations (Expectation)."', benefit: 'A prioritized list of user pain points and initial "inversion" ideas, providing a strong foundation for the "Define" phase of Design Thinking.' },
+                        { models: ['Regret Minimization', 'Self-Consistency'], title: 'Disruptive Ideation', prompt: '"What: Generate radical product concepts for the smart home market. Why: To disrupt existing paradigms... How: By leveraging AI and advanced sensors... Generate three distinct, highly innovative product concepts using different reasoning paths (e.g., one focused on simplicity, one on functionality, one on sustainability). Then, select the most consistently disruptive and feasible concept and explain why."', benefit: 'Multiple, diverse, and potentially disruptive product ideas, with a self-selected "best" option vetted through different conceptual lenses, fostering out-of-the-box thinking.' },
+                        { models: ['Network Effects', 'Self-Critical'], title: 'Network Effect & Ecosystem Design', prompt: '"For the chosen disruptive smart home product concept, outline a strategy to build network effects. Follow these sections: 1. Core Product Value, 2. User Acquisition Strategy, 3. Ecosystem Development (APIs), 4. Monetization Strategy. After outlining, critically assess your strategy for two potential weaknesses in fostering network effects and propose solutions."', benefit: 'A structured plan for cultivating network effects, including a critical self-assessment to identify and address potential pitfalls in ecosystem growth.' }
+                    ]
+                },
+                'problem-solving': {
+                    title: 'Complex Problem-Solving & Operational Resilience',
+                    scenario: 'A global manufacturing company faces a critical, unforeseen supply chain disruption, such as a natural disaster impacting a key supplier region. Rapid, effective problem-solving is essential.',
+                    steps: [
+                        { models: ['Bottleneck Analysis', 'Chain-of-Thought'], title: 'Root Cause & Bottleneck ID', prompt: '"As a supply chain resilience expert (Role), analyze the recent disruption in our East Asian component supply (Task), considering the natural disaster, local infrastructure damage, and our current inventory levels (Context). Think step-by-step to identify the primary bottleneck(s) and their cascading effects on our production schedule and customer deliveries. Provide a detailed causal chain analysis (Expectation)."', benefit: 'Precise identification of root causes and bottlenecks, along with a clear understanding of ripple effects, enabling targeted intervention.' },
+                        { models: ['Lollapalooza Effect', 'Lede Structure', 'Self-Critical'], title: 'Scenario Planning & Mitigation', prompt: '"What: Develop three distinct mitigation scenarios for the ongoing supply chain disruption. Why: To minimize production delays... How: By leveraging alternative sourcing, logistics re-routing... For each scenario, critically evaluate its feasibility, cost, and potential for unintended negative Lollapalooza effects. Identify one key weakness in each scenario."', benefit: 'Multiple, well-defined mitigation strategies with inherent self-critique, allowing for robust contingency planning and proactive identification of negative synergies.' },
+                        { models: ['Vicarious Learning', 'Redundancy'], title: 'Lessons Learned & Future Resilience', prompt: '"Given our internal post-mortem report on the recent supply chain disruption, create a prompt that would generate a summary of key lessons learned, focusing on how we can enhance our supply chain\'s redundancy and resilience for future events. The summary should be structured with headings for \'Operational Learnings,\' \'Strategic Enhancements,\' and \'Redundancy Implementation\'."', benefit: 'Extracts and structures actionable insights for long-term supply chain resilience, focusing on learning from past challenges to prevent future occurrences.' }
+                    ]
+                }
+            },
+            mindset: [
+                { title: 'Continuous Learning & Iteration', content: 'The business landscape is dynamic. Your mental models, like maps, need constant updating. Challenge and unlearn outdated models to fight confirmation bias. Similarly, AI prompting is iterative. Each refinement sharpens not only the AI\'s response but also your own understanding. This creates a virtuous cycle where your thinking improves the AI, and the AI\'s output improves your thinking.' },
+                { title: 'Building an AI-Augmented "Trusted Circle"', content: 'Munger advocated for a "trusted circle" of advisors. AI can be a powerful extension of this. Use prompts to assign AI different roles—"devil\'s advocate," "futurist," "risk assessor"—to simulate a diverse panel of experts. This scales your access to varied perspectives, helps challenge your assumptions, and reveals blind spots, leading to more robust strategic conversations.' },
+                { title: 'Mitigating Cognitive Biases with AI', content: 'Cognitive biases can derail even the best strategies. The latticework itself is a tool to reduce bias by forcing multi-disciplinary thinking. Amplify this by prompting the AI to actively challenge you. Use "Self-Critical" or "Self-Consistency" prompts to make the AI find flaws in its own logic or present counter-arguments. This transforms AI from an answer engine into a collaborative partner for enhancing objectivity and critical thinking.' }
+            ]
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const latticeworkContainer = document.getElementById('latticework-cards');
+            const aiPromptingContainer = document.getElementById('ai-prompting-cards');
+            const playbooksContainer = document.getElementById('playbooks-content');
+            const mindsetContainer = document.getElementById('mindset-content');
+
+            function createLatticeworkCard(model) {
+                return `
+                    <div class="card bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+                        <h3 class="font-bold text-lg text-blue-600">${model.title}</h3>
+                        <p class="text-sm text-stone-700 mt-2">${model.definition}</p>
+                        <p class="text-xs text-stone-500 mt-4"><span class="font-semibold">Application:</span> ${model.application}</p>
+                        <p class="text-xs text-green-700 bg-green-50 p-2 rounded-md mt-2"><span class="font-semibold">Benefit:</span> ${model.benefit}</p>
+                    </div>
+                `;
+            }
+
+            function createAIPromptingCard(tech) {
+                return `
+                    <div class="card bg-white p-6 rounded-lg shadow-sm border border-stone-200 flex flex-col h-full">
+                        <h3 class="font-bold text-lg text-blue-600">${tech.title}</h3>
+                        <p class="text-sm text-stone-700 mt-2 flex-grow"><span class="font-semibold">Purpose:</span> ${tech.purpose}</p>
+                        <p class="text-sm text-stone-600 mt-2 flex-grow"><span class="font-semibold">When to Use:</span> ${tech.usage}</p>
+                        <div class="mt-4 bg-stone-100 p-3 rounded-md text-xs font-mono text-stone-800 relative">
+                           <code>${tech.example}</code>
+                           <button class="copy-btn absolute top-2 right-2 bg-stone-200 hover:bg-stone-300 text-stone-700 px-2 py-1 rounded text-xs">Copy</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            function createPlaybook(playbookKey) {
+                const playbook = data.playbooks[playbookKey];
+                const stepsHtml = playbook.steps.map((step, index) => {
+                    const modelsHtml = step.models.map(m => `<span class="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">${m}</span>`).join('');
+                    return `
+                        <div class="flex flex-col md:flex-row items-start mb-8">
+                            <div class="flex items-center justify-center w-12 h-12 bg-blue-500 text-white font-bold rounded-full mb-4 md:mb-0 md:mr-6 flex-shrink-0">${index + 1}</div>
+                            <div class="flex-grow">
+                                <h4 class="text-xl font-semibold mb-2">${step.title}</h4>
+                                <div class="flex flex-wrap items-center mb-4">${modelsHtml}</div>
+                                <div class="bg-white p-4 rounded-lg border border-stone-200">
+                                    <p class="text-sm font-semibold text-stone-600 mb-2">AI Prompt Example:</p>
+                                    <div class="bg-stone-100 p-4 rounded-md text-sm font-mono text-stone-800 relative">
+                                        <code>${step.prompt}</code>
+                                        <button class="copy-btn absolute top-2 right-2 bg-stone-200 hover:bg-stone-300 text-stone-700 px-2 py-1 rounded text-xs">Copy</button>
+                                    </div>
+                                    <p class="text-sm mt-4 p-3 bg-green-50 text-green-800 rounded-md"><span class="font-semibold">Expected Benefit:</span> ${step.benefit}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('<hr class="my-8 border-dashed border-stone-300">');
+
+                return `
+                    <div id="${playbookKey}" class="playbook-content fade-in">
+                        <div class="bg-white p-6 rounded-lg shadow-md border border-stone-200 mb-6">
+                           <h3 class="text-xl font-bold text-center text-blue-600 mb-2">${playbook.title}</h3>
+                           <p class="text-center text-stone-600">${playbook.scenario}</p>
+                        </div>
+                        ${stepsHtml}
+                    </div>
+                `;
+            }
+
+            function createMindsetAccordion(item) {
+                return `
+                    <div class="bg-white rounded-lg shadow-sm border border-stone-200">
+                        <details class="p-4">
+                            <summary class="font-semibold text-lg cursor-pointer text-stone-800">${item.title}</summary>
+                            <p class="mt-3 text-stone-600">${item.content}</p>
+                        </details>
+                    </div>
+                `;
+            }
+
+            function loadContent() {
+                latticeworkContainer.innerHTML = data.latticeworkModels.map(createLatticeworkCard).join('');
+                aiPromptingContainer.innerHTML = data.aiPromptingTechniques.map(createAIPromptingCard).join('');
+                playbooksContainer.innerHTML = createPlaybook('strategy');
+                mindsetContainer.innerHTML = data.mindset.map(createMindsetAccordion).join('');
+                addCopyListeners();
+            }
+
+            function switchMainTab(tab) {
+                document.querySelectorAll('.main-tab').forEach(t => {
+                    t.classList.remove('tab-active');
+                    t.classList.add('tab-inactive');
+                });
+                tab.classList.remove('tab-inactive');
+                tab.classList.add('tab-active');
+
+                document.querySelectorAll('.main-content-panel').forEach(p => {
+                    p.classList.add('hidden');
+                });
+                document.getElementById(tab.dataset.tab).classList.remove('hidden');
+            }
+            
+            function switchPlaybookTab(tab) {
+                document.querySelectorAll('.playbook-tab').forEach(t => {
+                    t.classList.remove('playbook-tab-active');
+                    t.classList.add('playbook-tab-inactive');
+                });
+                tab.classList.remove('playbook-tab-inactive');
+                tab.classList.add('playbook-tab-active');
+                
+                playbooksContainer.innerHTML = createPlaybook(tab.dataset.playbook);
+                addCopyListeners();
+            }
+
+            function addCopyListeners() {
+                document.querySelectorAll('.copy-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const codeElement = e.target.previousElementSibling;
+                        const textToCopy = codeElement.innerText;
+                        
+                        const tempTextarea = document.createElement('textarea');
+                        tempTextarea.value = textToCopy;
+                        document.body.appendChild(tempTextarea);
+                        tempTextarea.select();
+                        try {
+                            document.execCommand('copy');
+                            button.innerText = 'Copied!';
+                            setTimeout(() => { button.innerText = 'Copy'; }, 2000);
+                        } catch (err) {
+                            console.error('Failed to copy text: ', err);
+                        }
+                        document.body.removeChild(tempTextarea);
+                    });
+                });
+            }
+
+            document.querySelectorAll('.main-tab').forEach(tab => {
+                tab.addEventListener('click', () => switchMainTab(tab));
+            });
+
+            document.getElementById('playbooks').addEventListener('click', (e) => {
+                if (e.target.matches('.playbook-tab')) {
+                    switchPlaybookTab(e.target);
+                }
+            });
+            
+            loadContent();
+        });
+    </script>
+</body>
+</html>
