@@ -108,9 +108,9 @@
                 </details>
             </div>
         </section>
-      <footer>
-        <div>
-          <p>Human directed, AI content curated by Rico Ho. Click <a href="index.html">HERE</a> to return to home page.</p>
+      <footer class="bg-white mt-16 md:mt-24 border-t">
+        <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-gray-500">
+          <p>Human directed, AI content curated by <a href="https://www.linkedin.com/in/ricoho/" target="_blank">Rico Ho</a>. Click <a href="index.html">HERE</a> to return to home page.</p>
         </div>
       </footer>
 
@@ -272,7 +272,7 @@
         const modalContent = document.getElementById('modal-content');
 
         const categories = ['All', ...new Set(mentalModelsData.map(m => m.category))];
-        let currentFilter = 'All';
+        let currentFilter = 'Essential Starter Models';
 
         function renderFilters() {
             filterContainer.innerHTML = categories.map(cat => `
