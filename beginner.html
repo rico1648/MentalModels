@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Mental Models Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Warm Neutrals & Teal -->
+    <!-- Application Structure Plan: The application is designed as a single-page tool with a filterable card grid. This structure was chosen over a linear document to allow users to quickly find relevant models for a specific task (e.g., "Problem-Solving") without scrolling. A top navigation bar holds category filters which dynamically update the main grid. Clicking a card opens a modal with detailed information, providing a focused view without leaving the main page. This enhances usability by making the guide an interactive, task-oriented utility rather than a static reference. -->
+    <!-- Visualization & Content Choices: The source report is entirely textual. Therefore, the primary presentation method is a grid of interactive "cards". Each card represents a model. Goal: Organize/Inform -> Method: Card Grid + Filters. Interaction: Clicking a filter button narrows the selection; clicking a card reveals details in a modal. This is more effective than charts, as there is no quantitative data to visualize. The "Copy Prompt" button is a key interactive element for utility. Justification: This design directly supports the user's goal of finding and applying a specific mental model quickly. Library/Method: Vanilla JS for interaction, Tailwind CSS for styling. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            background-color: #f5f5f4; /* stone-100 */
+            font-family: 'Inter', sans-serif;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        .nav-button {
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-button.active {
+            background-color: #0d9488; /* teal-600 */
+            color: white;
+            font-weight: 600;
+        }
+        .card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .modal-content {
+            animation: slide-up 0.3s ease-out;
+        }
+        @keyframes slide-up {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body class="text-stone-800">
+
+    <div id="app" class="container mx-auto px-4 py-8 md:py-12">
+
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-bold text-teal-700 mb-2">Interactive Mental Models Guide</h1>
+            <p class="text-lg text-stone-600 max-w-3xl mx-auto">A beginner's toolkit for better thinking. Filter by category and click on any model to learn how to apply it.</p>
+        </header>
+
+        <nav id="category-filters" class="flex flex-wrap justify-center gap-2 md:gap-3 mb-10">
+        </nav>
+
+        <main id="models-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        </main>
+
+        <section id="how-to-use" class="mt-16 max-w-4xl mx-auto">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <details class="group">
+                    <summary class="flex items-center justify-between font-semibold text-xl cursor-pointer text-teal-700">
+                        How to Use This Guide
+                        <span class="transform transition-transform duration-200 group-open:rotate-180">&#9660;</span>
+                    </summary>
+                    <div class="mt-4 text-stone-600 space-y-4">
+                        <p>Adopting mental models is a marathon, not a sprint. Follow these steps to integrate them into your daily life without feeling overwhelmed.</p>
+                        <ol class="list-decimal list-inside space-y-2">
+                            <li><strong>Master the "Essential 5" First:</strong> For the next month, focus only on the models in the "Essential Starter Models" category.</li>
+                            <li><strong>Pick One New Model a Week:</strong> Once you're comfortable, choose one new model to learn each week.</li>
+                            <li><strong>Use the AI Prompts:</strong> The fastest way to learn is by doing. Copy the prompt, fill in your details, and use it with an AI assistant.</li>
+                            <li><strong>Keep a Decision Journal:</strong> Briefly write down significant decisions and which models you used.</li>
+                        </ol>
+                    </div>
+                </details>
+                 <hr class="my-4">
+                 <details class="group">
+                    <summary class="flex items-center justify-between font-semibold text-xl cursor-pointer text-teal-700">
+                        Quick Decision Framework
+                        <span class="transform transition-transform duration-200 group-open:rotate-180">&#9660;</span>
+                    </summary>
+                    <div class="mt-4 text-stone-600 space-y-2">
+                        <p>When faced with a tough choice, use this 3-prompt sequence:</p>
+                        <ol class="list-decimal list-inside space-y-1">
+                            <li><strong>Start with Inversion:</strong> Ask what would guarantee failure.</li>
+                            <li><strong>Use Second-Order Thinking:</strong> Consider the ripple effects of your decision.</li>
+                            <li><strong>Check Your Blind Spots:</strong> Challenge your own beliefs with Confirmation Bias in mind.</li>
+                        </ol>
+                    </div>
+                </details>
+                 <hr class="my-4">
+                 <details class="group">
+                    <summary class="flex items-center justify-between font-semibold text-xl cursor-pointer text-teal-700">
+                        Warning: Avoid Overcomplication
+                        <span class="transform transition-transform duration-200 group-open:rotate-180">&#9660;</span>
+                    </summary>
+                    <div class="mt-4 text-stone-600 space-y-2">
+                         <ul class="list-disc list-inside space-y-1">
+                            <li><strong>The "Lollapalooza" Trap:</strong> Don't try to apply 10 models to a simple problem.</li>
+                            <li><strong>Analysis Paralysis:</strong> The goal is to act, not get stuck in endless thinking.</li>
+                            <li><strong>The Man with a Hammer:</strong> Match the model to the problem, not the other way around.</li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+        </section>
+      <footer>
+        <div>
+          <p>Human directed, AI content curated by Rico Ho. Click <a href="index.html">HERE</a> to return to home page.</p>
+        </div>
+      </footer>
+
+    </div>
+
+    <!-- Modal -->
+    <div id="model-modal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center p-4 z-50">
+        <div id="modal-content" class="modal-content bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        </div>
+    </div>
+
+
+    <script>
+    const mentalModelsData = [
+        {
+            id: 1, model: "Inversion", category: "Essential Starter Models", origin: "Charlie Munger",
+            whenToUse: "When you're stuck on a problem or want to avoid failure. Instead of asking how to succeed, ask 'What would cause this to fail?'",
+            example: "<strong>Goal:</strong> Launch a successful podcast. <br> <strong>Inversion:</strong> 'What would make our podcast an absolute failure?' (e.g., bad audio, inconsistent schedule, boring topics). Now, you have a clear list of things to avoid.",
+            prompt: "To achieve [my primary goal], I want to use Inversion. What are all the critical factors that would guarantee I fail? List them out, and for each factor, suggest a specific action I can take to avoid it."
+        },
+        {
+            id: 2, model: "Second-Order Thinking", category: "Essential Starter Models", origin: "Ray Dalio",
+            whenToUse: "When making any significant decision with long-term consequences. It forces you to think past the immediate result.",
+            example: "<strong>Decision:</strong> Giving your team a difficult but necessary piece of feedback. <br> <strong>1st Order:</strong> They might feel bad. <br> <strong>2nd Order:</strong> They might improve their skills, leading to better team performance and their own career growth.",
+            prompt: "I am considering making this decision: [Describe the decision]. Analyze this using Second-Order Thinking. What are the immediate (1st order) consequences? And then, what are the subsequent (2nd and 3rd order) consequences of those initial effects?"
+        },
+        {
+            id: 3, model: "Circle of Competence", category: "Essential Starter Models", origin: "Warren Buffett",
+            whenToUse: "When evaluating an opportunity or making a decision in an area where you may lack expertise.",
+            example: "You're an expert software engineer, but your friend asks you to invest in their new restaurant. Your restaurant knowledge is outside your Circle of Competence, so the risk is higher than you can properly assess.",
+            prompt: "My goal is to [describe your goal, e.g., invest in a new company]. My core expertise is in [describe your skills/knowledge]. Based on this, am I operating inside or outside my Circle of Competence? What key questions must I be able to answer to proceed confidently?"
+        },
+        {
+            id: 4, model: "Opportunity Cost", category: "Essential Starter Models", origin: "Economics",
+            whenToUse: "When choosing between multiple options, especially for time or money. Every 'yes' to one thing is a 'no' to something else.",
+            example: "You spend Saturday afternoon watching TV. The opportunity cost isn't just the time; it's the other things you could have done, like exercising, learning a skill, or spending time with family.",
+            prompt: "I am choosing between [Option A] and [Option B]. Analyze this choice through the lens of Opportunity Cost. If I choose Option A, what is the true cost in terms of the benefits I'm giving up from Option B and any other potential options?"
+        },
+        {
+            id: 5, model: "Margin of Safety", category: "Essential Starter Models", origin: "Benjamin Graham",
+            whenToUse: "When planning projects, making investments, or setting deadlines. It involves building a buffer to protect against unforeseen problems.",
+            example: "If you estimate a project will take 10 days, you build in a Margin of Safety by setting the deadline for 13 days. This buffer accounts for unexpected delays or errors.",
+            prompt: "I am planning [a project or decision with a specific target, e.g., launching a website in 30 days]. Apply the Margin of Safety principle. What are the key variables and potential points of failure? Suggest a practical buffer I can add to my plan to protect against miscalculation or bad luck."
+        },
+        {
+            id: 6, model: "First Principles Thinking", category: "Problem-Solving", origin: "Aristotle / Elon Musk",
+            whenToUse: "When you want to break free from conventional wisdom and innovate. It involves breaking a problem down to its fundamental truths.",
+            example: "<strong>Problem:</strong> 'Luggage is too expensive.' <br> <strong>First Principles:</strong> What is luggage? A box with wheels. What are the costs of its fundamental parts (aluminum, wheels, fabric)? By sourcing the parts, you can see a path to building it for far less.",
+            prompt: "I want to solve this problem: [Describe the problem]. Deconstruct it for me using First Principles. What are the fundamental, unchangeable truths or basic elements of this situation? Based on these truths, suggest 2-3 innovative solutions that ignore conventional assumptions."
+        },
+        {
+            id: 7, model: "Systems Thinking", category: "Problem-Solving", origin: "Jay Wright Forrester",
+            whenToUse: "When dealing with complex, interconnected problems where cause and effect are not obvious (e.g., team morale, climate change).",
+            example: "A manager offers a bonus for 'most bugs fixed.' This causes developers to write sloppy code to fix later, leading to more bugs overall. Systems thinking reveals the feedback loop.",
+            prompt: "Analyze this situation using Systems Thinking: [Describe a complex situation, e.g., 'Our sales team is missing its targets despite working longer hours']. Identify the key parts of the system, the relationships between them, and any potential feedback loops."
+        },
+        {
+            id: 8, model: "Occam's Razor", category: "Problem-Solving", origin: "William of Ockham",
+            whenToUse: "When faced with multiple competing explanations for a phenomenon. The simplest one is usually the correct one.",
+            example: "Your website is down. It could be a sophisticated cyberattack from a rival, or the server just needs to be rebooted. Occam's Razor suggests you check the server first.",
+            prompt: "I have a problem: [Describe the problem]. Here are three possible explanations: [Explanation 1], [Explanation 2], and [Explanation 3]. Apply Occam's Razor to evaluate them. Which is the most likely, and why?"
+        },
+        {
+            id: 9, model: "Hanlon's Razor", category: "Problem-Solving", origin: "Robert J. Hanlon",
+            whenToUse: "When someone's actions have negative consequences for you. It helps avoid paranoia and preserve relationships.",
+            example: "A colleague didn't send you the report you needed. Instead of assuming they are trying to sabotage you, Hanlon's Razor suggests it's more likely they just forgot.",
+            prompt: "A person did this: [Describe the negative action]. My initial interpretation is that they did it out of malice. Apply Hanlon's Razor to this situation. What are 2-3 alternative explanations that assume ignorance or carelessness instead of bad intent?"
+        },
+        {
+            id: 10, model: "Base Rates", category: "Decision-Making", origin: "Daniel Kahneman",
+            whenToUse: "When forecasting the outcome of a specific situation. It forces you to look at the statistical data for similar situations.",
+            example: "You're launching a new restaurant. You feel it will be a huge success. The base rate shows that ~60% of restaurants fail in their first year. This should temper your optimism and improve your planning.",
+            prompt: "I am trying to predict the outcome of this situation: [Describe your specific situation, e.g., 'launching a new SaaS product']. What is the relevant reference class for this? Find the statistical base rate of success/failure for that class and tell me how I should adjust my forecast."
+        },
+        {
+            id: 11, model: "Regret Minimization Framework", category: "Decision-Making", origin: "Jeff Bezos",
+            whenToUse: "When making a major, life-altering decision. It helps prioritize long-term happiness over short-term comfort.",
+            example: "Jeff Bezos used this to decide whether to leave his stable job to start Amazon. He projected himself to age 80 and asked which he'd regret more: trying and failing, or never trying at all.",
+            prompt: "I have to make a major life decision: [Describe the decision]. Apply the Regret Minimization Framework. Project me forward to age 80. Which choice will I be more likely to regret: [Option A] or [Option B]? Explain the reasoning from a long-term perspective."
+        },
+        {
+            id: 12, model: "Thinking in Bets", category: "Decision-Making", origin: "Annie Duke",
+            whenToUse: "When making decisions under uncertainty. It shifts focus from 'right/wrong' to probabilities and quality of the decision process.",
+            example: "You hire a candidate who seemed perfect but doesn't work out. Instead of saying 'I made the wrong decision,' you say, 'I made a good bet based on the information I had, but it didn't pay off.'",
+            prompt: "I made this decision: [Describe a past decision] and the outcome was [describe the result]. Analyze my decision process, not the outcome. Was it a good 'bet' at the time based on the information available? What could I have done to improve the quality of my decision process?"
+        },
+        {
+            id: 13, model: "Incentives", category: "People & Psychology", origin: "Charlie Munger",
+            whenToUse: "When trying to understand why people behave the way they do or to predict their actions.",
+            example: "A company's sales team is compensated only on new customer acquisition. Don't be surprised when they neglect existing customers, even if it hurts the company long-term.",
+            prompt: "I want to understand the behavior in this situation: [Describe a situation or system]. Analyze the incentives for each party involved. How are the current incentives driving their actions? Suggest one change to the incentive structure to achieve [desired outcome]."
+        },
+        {
+            id: 14, model: "Confirmation Bias", category: "People & Psychology", origin: "Francis Bacon",
+            whenToUse: "When researching a topic or forming an opinion. Be aware of your natural tendency to seek out information that confirms your existing beliefs.",
+            example: "You believe a certain stock is a great investment. You start only reading news articles and analyst reports that support your view, ignoring any negative information.",
+            prompt: "I hold this belief: [State your belief or hypothesis]. I want to challenge my Confirmation Bias. Act as a devil's advocate and provide three strong, evidence-based arguments against my belief. Also, point me to the type of information I should be seeking out."
+        },
+        {
+            id: 15, model: "Social Proof", category: "People & Psychology", origin: "Robert Cialdini",
+            whenToUse: "When making a choice in an unfamiliar situation. We often look to others' behavior to guide our own.",
+            example: "You're in a new city and looking for a place to eat. You see two restaurants: one is empty, and the other has a long line. You're more likely to choose the one with the line, assuming it's better.",
+            prompt: "I am trying to market [my product/service]. How can I ethically use the principle of Social Proof to increase trust and adoption? Provide 3 specific tactics, such as using testimonials, case studies, or showing user counts."
+        },
+        {
+            id: 16, model: "Fundamental Attribution Error", category: "People & Psychology", origin: "Lee Ross",
+            whenToUse: "When judging someone else's behavior. We tend to attribute their actions to their character, while attributing our own actions to the situation.",
+            example: "If someone cuts you off in traffic, you think, 'What a jerk!' If you cut someone off, you think, 'I'm late for a meeting.'",
+            prompt: "My colleague [or friend/family member] did this: [Describe their action]. I interpreted it as a reflection of their character (e.g., they are lazy/incompetent). Apply the Fundamental Attribution Error. What are 3 plausible situational factors that could have caused this behavior instead?"
+        },
+        {
+            id: 17, model: "Supply & Demand", category: "Business & Economics", origin: "Adam Smith",
+            whenToUse: "When analyzing prices, market trends, or business opportunities.",
+            example: "After a popular show features a specific brand of sneakers, demand skyrockets. With the same supply, the price of the sneakers goes up.",
+            prompt: "Analyze the market for [product or service, e.g., 'remote software developers'] using Supply and Demand. What are the key factors currently affecting supply? What factors are affecting demand? Based on this, predict the likely trend for prices/salaries."
+        },
+        {
+            id: 18, model: "Economies of Scale", category: "Business & Economics", origin: "Adam Smith",
+            whenToUse: "When evaluating a company's competitive advantage or planning for growth.",
+            example: "A small bakery buys flour for $2/lb. A huge corporation buys it for $0.50/lb because they buy it by the ton. This cost advantage allows them to offer lower prices.",
+            prompt: "My business is [describe your business]. How can I leverage Economies of Scale as I grow? Identify 3 specific areas (e.g., procurement, marketing, technology) where my cost per unit could decrease as my output increases."
+        },
+        {
+            id: 19, model: "Network Effects", category: "Business & Economics", origin: "Robert Metcalfe",
+            whenToUse: "When analyzing businesses where the value of the service increases as more people use it.",
+            example: "Facebook or LinkedIn are valuable because that's where everyone else is. A new social network struggles because it has no users, and therefore no value.",
+            prompt: "I am building [a product or platform, e.g., 'a new app for local book clubs']. How can I design it to generate strong Network Effects from the beginning? Suggest 2 strategies to solve the 'chicken and egg' problem and create value for the first users."
+        },
+        {
+            id: 20, model: "Creative Destruction", category: "Business & Economics", origin: "Joseph Schumpeter",
+            whenToUse: "When analyzing industry trends and long-term competitive threats.",
+            example: "Netflix (streaming) engaged in creative destruction against Blockbuster (video rentals). Digital cameras did the same to Kodak (film).",
+            prompt: "Analyze my industry: [describe your industry]. What innovations or new business models could lead to Creative Destruction in this space? Identify 2-3 potential threats and suggest how an incumbent company like mine could adapt."
+        },
+        {
+            id: 21, model: "Redundancy", category: "Risk & Safety", origin: "Engineering",
+            whenToUse: "When designing critical systems where failure is not an option.",
+            example: "Airplanes have multiple engines. Your computer has a backup hard drive. These are redundant systems designed to take over if the primary one fails.",
+            prompt: "I am designing a critical system for [describe the system's purpose, e.g., 'handling customer payments']. Apply the principle of Redundancy. What are the single points of failure in this system? Suggest 2-3 practical ways to build in redundancy to make it more robust."
+        },
+        {
+            id: 22, model: "Swiss Cheese Model", category: "Risk & Safety", origin: "James Reason",
+            whenToUse: "When analyzing accidents or preventing future failures. It shows that disasters happen when multiple small failures (holes in the cheese) align.",
+            example: "A plane crash isn't caused by just one thing. It's usually a combination of pilot error, a mechanical issue, bad weather, and a communication breakdown all happening at once.",
+            prompt: "We experienced a failure: [Describe the failure or accident]. Analyze this using the Swiss Cheese Model. What were the different layers of defense that should have prevented this? Identify the 'holes' in each layer that lined up to allow the failure to occur."
+        },
+        {
+            id: 23, model: "Black Swan Events", category: "Risk & Safety", origin: "Nassim Nicholas Taleb",
+            whenToUse: "When thinking about long-term strategy and risk management. It reminds you to prepare for the highly improbable but massively impactful event.",
+            example: "The 2008 financial crisis or the COVID-19 pandemic were Black Swan events. They were almost impossible to predict, but they completely changed the world.",
+            prompt: "I am developing a long-term strategy for [my business/career]. While I can't predict Black Swan events, how can I build a strategy that is more robust and less fragile to extreme, unexpected shocks? Suggest 3 principles or actions."
+        }
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const grid = document.getElementById('models-grid');
+        const filterContainer = document.getElementById('category-filters');
+        const modal = document.getElementById('model-modal');
+        const modalContent = document.getElementById('modal-content');
+
+        const categories = ['All', ...new Set(mentalModelsData.map(m => m.category))];
+        let currentFilter = 'All';
+
+        function renderFilters() {
+            filterContainer.innerHTML = categories.map(cat => `
+                <button class="nav-button px-4 py-2 text-sm md:text-base rounded-full border border-stone-300 bg-white text-stone-700 hover:bg-stone-50 ${cat === currentFilter ? 'active' : ''}" data-category="${cat}">
+                    ${cat}
+                </button>
+            `).join('');
+            
+            filterContainer.querySelectorAll('.nav-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    currentFilter = button.dataset.category;
+                    renderFilters();
+                    renderModels();
+                });
+            });
+        }
+        
+        function renderModels() {
+            grid.innerHTML = '';
+            const filteredModels = currentFilter === 'All'
+                ? mentalModelsData
+                : mentalModelsData.filter(m => m.category === currentFilter);
+
+            filteredModels.forEach(model => {
+                const card = document.createElement('div');
+                card.className = 'card bg-white rounded-lg shadow-md p-6 flex flex-col justify-between cursor-pointer';
+                card.innerHTML = `
+                    <div>
+                        <p class="text-sm text-teal-600 font-semibold">${model.category}</p>
+                        <h3 class="text-xl font-bold text-stone-800 mt-1">${model.model}</h3>
+                    </div>
+                    <p class="text-stone-500 mt-4 text-sm">Click to learn more & get AI prompt</p>
+                `;
+                card.addEventListener('click', () => showModal(model));
+                grid.appendChild(card);
+            });
+        }
+
+        function showModal(model) {
+            modalContent.innerHTML = `
+                <div class="p-6 md:p-8">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <p class="text-md text-teal-600 font-semibold">${model.category}</p>
+                            <h2 class="text-3xl font-bold">${model.model}</h2>
+                            <p class="text-sm text-stone-500 mt-1">Origin: ${model.origin}</p>
+                        </div>
+                        <button id="close-modal" class="text-3xl text-stone-500 hover:text-stone-800">&times;</button>
+                    </div>
+
+                    <div class="space-y-6 text-stone-700">
+                        <div>
+                            <h4 class="font-semibold text-lg mb-1">When to Use It:</h4>
+                            <p>${model.whenToUse}</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg mb-1">Real-World Example:</h4>
+                            <div class="prose prose-stone max-w-none">${model.example}</div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg mb-1">AI Prompt Template:</h4>
+                            <div class="bg-stone-100 p-4 rounded-lg">
+                                <p class="font-mono text-sm leading-relaxed">${model.prompt}</p>
+                                <button class="copy-prompt-btn mt-4 w-full bg-teal-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-teal-700 transition-colors">
+                                    Copy Prompt
+                                </button>
+                                <p class="copy-feedback text-center text-sm text-teal-600 mt-2 h-4"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            document.getElementById('close-modal').addEventListener('click', () => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            });
+            
+            const copyBtn = modalContent.querySelector('.copy-prompt-btn');
+            copyBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(model.prompt).then(() => {
+                    const feedback = modalContent.querySelector('.copy-feedback');
+                    feedback.textContent = 'Copied to clipboard!';
+                    copyBtn.textContent = 'Copied!';
+                    copyBtn.disabled = true;
+                    setTimeout(() => { 
+                       feedback.textContent = '';
+                       copyBtn.textContent = 'Copy Prompt';
+                       copyBtn.disabled = false;
+                    }, 2000);
+                });
+            });
+        }
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        });
+
+        renderFilters();
+        renderModels();
+    });
+    </script>
+</body>
+</html>
